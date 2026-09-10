@@ -1,0 +1,435 @@
+/* =========================================================
+   Compare Reports - Cycle-to-Cycle Delta & Analyst Intelligence
+   BISAG-N / MeitY VAPT Command Suite
+   ========================================================= */
+
+.compare-container {
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 1. TOP HEADER PANEL */
+.compare-header-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.compare-header-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #00E5FF, #14F195, #FFB020, #FF4D6D);
+}
+
+.compare-title-group h1 {
+  font-family: var(--font-cyber);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.compare-title-group p {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.compare-tab-buttons {
+  display: flex;
+  background: var(--bg-pill);
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  gap: 4px;
+}
+
+.compare-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--font-main);
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.compare-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.compare-tab-btn.active {
+  background: #00E5FF;
+  color: #020617;
+  box-shadow: 0 2px 10px rgba(0, 229, 255, 0.3);
+}
+
+/* 2. PROJECT / CYCLE COMPARISON SELECTOR CARD */
+.compare-selector-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.selector-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compare-select {
+  background: var(--bg-input);
+  color: var(--text-main);
+  border: 1px solid var(--soc-panel-border, rgba(0, 229, 255, 0.3));
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-main);
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.compare-select:hover, .compare-select:focus {
+  border-color: #00E5FF;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+/* 3. DELTA METRICS KPI CARDS */
+.compare-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.compare-kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: var(--card-shadow);
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.compare-kpi-card:hover {
+  transform: translateY(-2px);
+}
+
+.compare-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.compare-kpi-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+}
+
+.compare-kpi-val {
+  font-family: var(--font-cyber);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.compare-kpi-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* 4. COMPARISON BREAKDOWN TABLES (3-COLUMN OR 2-COLUMN) */
+.comparison-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.delta-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.delta-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 12px;
+}
+
+.delta-panel-header h3 {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delta-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.delta-item-row {
+  background: var(--bg-pill);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+
+.delta-item-row:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(0, 229, 255, 0.3);
+}
+
+.delta-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.delta-item-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.delta-item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delta-item-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+/* 5. ANALYST OVERLAP INTELLIGENCE CARDS */
+.analyst-overlap-banner {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid #00E5FF;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.analyst-overlap-left h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 4px 0 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.analyst-overlap-count-box {
+  background: var(--bg-pill);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 14px 24px;
+  text-align: center;
+}
+
+.analyst-overlap-count-num {
+  font-family: var(--font-cyber);
+  font-size: 30px;
+  font-weight: 800;
+  color: #00E5FF;
+  line-height: 1;
+}
+
+/* Engagement Projects Grid */
+.engagements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.engagement-card {
+  background: var(--bg-pill);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.engagement-card:hover {
+  border-color: #00E5FF;
+  background: var(--bg-card-hover);
+}
+
+.engagement-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.engagement-dept-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #00E5FF;
+  font-weight: 700;
+}
+
+.engagement-status-tag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.engagement-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.engagement-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN FOR COMPARE REPORTS
+========================================================= */
+
+@media (max-width: 1024px) {
+  .compare-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .compare-header-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .compare-tab-buttons {
+    width: 100%;
+  }
+  .compare-tab-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .selector-grid {
+    grid-template-columns: 1fr;
+  }
+  .compare-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .analyst-overlap-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .engagements-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .compare-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .compare-title-group h1 {
+    font-size: 20px;
+  }
+}
