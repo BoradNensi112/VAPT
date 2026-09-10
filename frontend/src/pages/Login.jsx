@@ -48,13 +48,14 @@ export default function Login() {
 
     try {
       const res = await login(username, password, role, adminSecretKey);
-      if (res.success) {
+      if (res && res.success) {
         navigate('/dashboard');
       } else {
-        setError(res.message || 'Login failed');
+        setError((res && res.message) || 'Login failed. Please check credentials or secret key.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Server error. Please check backend connection.');
+      console.warn('Login catch block fallback:', err);
+      setError(err?.response?.data?.message || err?.message || 'Authentication error. Please retry.');
     } finally {
       setLoading(false);
     }

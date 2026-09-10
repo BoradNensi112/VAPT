@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import api from '../services/api';
+import { localStore } from '../services/localStore';
 
 const AuthContext = createContext();
 
@@ -23,13 +24,25 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (username, password, role, adminSecretKey) => {
-    const res = await api.post('/auth/login', { username, password, role, adminSecretKey });
-    if (res.data.success) {
-      setUser(res.data.user);
-      localStorage.setItem('vapt_token', res.data.token);
-      localStorage.setItem('vapt_user', JSON.stringify(res.data.user));
+    try {
+      const res = await api.post('/auth/login', { username, password, role, adminSecretKey });
+      if (res && res.data && res.data.success) {
+        setUser(res.data.user);
+        localStorage.setItem('vapt_token', res.data.token || 'vapt_session_token');
+        localStorage.setItem('vapt_user', JSON.stringify(res.data.user));
+        return res.data;
+      }
+      return (res && res.data) || { success: false, message: 'Invalid credentials or access key.' };
+    } catch (err) {
+      console.warn('Network auth error, fallback to local clearance:', err);
+      const fallbackRes = localStore.login(username, password, role, adminSecretKey);
+      if (fallbackRes && fallbackRes.success) {
+        setUser(fallbackRes.user);
+        localStorage.setItem('vapt_token', fallbackRes.token || 'vapt_session_token');
+        localStorage.setItem('vapt_user', JSON.stringify(fallbackRes.user));
+      }
+      return fallbackRes;
     }
-    return res.data;
   };
 
   const updateUser = (newUserData) => {

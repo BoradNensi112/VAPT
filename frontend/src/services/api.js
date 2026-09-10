@@ -145,8 +145,15 @@ function handleLocalFallback(method, url, data) {
 }
 
 // Resilient Hybrid API Client
+const isLocalDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const hasRemoteBackend = Boolean(import.meta.env.VITE_API_BASE_URL);
+const shouldUseLiveServer = isLocalDev || hasRemoteBackend;
+
 const api = {
   async get(url, config) {
+    if (!shouldUseLiveServer) {
+      return handleLocalFallback('get', url);
+    }
     try {
       return await axiosInstance.get(url, config);
     } catch (err) {
@@ -158,6 +165,9 @@ const api = {
   },
 
   async post(url, data, config) {
+    if (!shouldUseLiveServer) {
+      return handleLocalFallback('post', url, data);
+    }
     try {
       return await axiosInstance.post(url, data, config);
     } catch (err) {
@@ -169,6 +179,9 @@ const api = {
   },
 
   async put(url, data, config) {
+    if (!shouldUseLiveServer) {
+      return handleLocalFallback('put', url, data);
+    }
     try {
       return await axiosInstance.put(url, data, config);
     } catch (err) {
@@ -180,6 +193,9 @@ const api = {
   },
 
   async delete(url, config) {
+    if (!shouldUseLiveServer) {
+      return handleLocalFallback('delete', url);
+    }
     try {
       return await axiosInstance.delete(url, config);
     } catch (err) {
