@@ -1,0 +1,1181 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "BISAG-N Administrator",
+      "username": "admin",
+      "email": "admin@bisag.gov.in",
+      "password_hash": "$2a$10$yxzikUuArb59tNOJWamxsOuCreAs0A0HJYyHxiSImL40UiNFPhXdG",
+      "role": "Admin",
+      "status": "Active",
+      "created_at": "2026-09-04T05:54:53.947Z",
+      "department": "Software",
+      "phone": "+91  9510649466",
+      "bio": "Senior Cybersecurity Analyst specializing in Web Application VAPT and Defensive Hardening.",
+      "specialization": "OWASP Top 10, CWE Testing, SSL/TLS Ciphers, Android APK Reverse Engineering"
+    },
+    {
+      "id": 2,
+      "name": "nensi",
+      "username": "nensi112",
+      "email": "boradnensi112@gmail.com",
+      "password_hash": "$2a$10$yxzikUuArb59tNOJWamxsOuCreAs0A0HJYyHxiSImL40UiNFPhXdG",
+      "role": "Security Analyst",
+      "status": "Active",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    }
+  ],
+  "analysts": [
+    {
+      "id": 1,
+      "name": "Ankit Nandaniya",
+      "department": "Software",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 2,
+      "name": "Arpan Goswami",
+      "department": "Software",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 3,
+      "name": "Gaurav Kadam",
+      "department": "Defence",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 4,
+      "name": "Divyansh Gohil",
+      "department": "SATCOM",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 5,
+      "name": "Jay Patel",
+      "department": "Software",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 6,
+      "name": "Jui Mehta",
+      "department": "General",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 7,
+      "name": "Purvadeep Sinh Jadeja",
+      "department": "GIS",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 8,
+      "name": "Ravi Barot",
+      "department": "Infrastructure",
+      "is_active": true,
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 9,
+      "name": "Rohit Sharma Test Analyst",
+      "department": "Software",
+      "is_active": true,
+      "created_at": "2026-09-04T06:17:26.580Z"
+    },
+    {
+      "id": 10,
+      "name": "Nensi  Borad",
+      "department": "Software",
+      "is_active": true,
+      "created_at": "2026-09-04T06:18:40.249Z"
+    },
+    {
+      "id": 11,
+      "name": "HarpalSinh Rathod",
+      "department": "Software",
+      "is_active": true,
+      "created_at": "2026-09-04T06:20:12.454Z"
+    }
+  ],
+  "projects": [
+    {
+      "id": 2,
+      "project_name": "new VAPT",
+      "target_url": "http://newVAPT.com",
+      "security_analysts": "Nensi  Borad, HarpalSinh Rathod, Ankit Nandaniya",
+      "project_managers": "Concern Project Manager: N/A",
+      "ciso_name": "Concern Additional Director: Shri Krunal Patel",
+      "remarks": "Functional Testing Report form was not provided at the time of the project submission to the Security Testing Team.\nTesting was conducted using only the following provided credentials:\nFunctional Bugs are attached to in the Findings folder Under /",
+      "created_by": 1,
+      "created_at": "2026-09-04T07:04:05.987Z",
+      "updated_at": "2026-09-04T07:04:05.987Z"
+    },
+    {
+      "id": 1,
+      "project_name": "design and devleop VAPT",
+      "target_url": "http://vapt.com",
+      "security_analysts": "Ankit Nandaniya, Nensi Borad, Jui Mehta, Nensi  Borad",
+      "project_managers": "Concern Project Manager: N/A",
+      "ciso_name": "Concern Additional Director: Shri Krunal Patel",
+      "remarks": "Functional Testing Report form was not provided at the time of the project submission to the Security Testing Team.\nTesting was conducted using only the following provided credentials:\nAs per the remarks provided by the development team in the request form, --- are out of scope.",
+      "created_by": 1,
+      "created_at": "2026-09-04T06:07:08.367Z",
+      "updated_at": "2026-09-04T06:18:58.302Z"
+    }
+  ],
+  "knowledge_base": [
+    {
+      "id": 9,
+      "vulnerability_name": "Custom Test Zero-Day Vulnerability",
+      "description": "Custom vulnerability test description.",
+      "steps_to_reproduce": "1. Test step 1.\n2. Test step 2.",
+      "remediation": "1. Test remediation.",
+      "severity": "Critical",
+      "reference": "Custom Test Zero-Day Vulnerability",
+      "owasp_category": "A01:2021-Broken Access Control",
+      "cwe_number": "CWE-284",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/284.html",
+      "created_at": "2026-09-04T06:17:31.282Z"
+    },
+    {
+      "id": 1,
+      "vulnerability_name": "Cross Site Scripting (XSS) [Stored / Reflected]",
+      "description": "Cross-Site Scripting attacks occur when malicious scripts are injected into otherwise trusted websites. An attacker can use XSS to send a malicious script to an unsuspecting user.",
+      "steps_to_reproduce": "1. Go to Collection Details.\n2. Enter the necessary details.\n3. Intercept the request.\n4. Replace the remarks value with an XSS payload.\n5. Observe that it is stored and executed in the browser.",
+      "remediation": "1. Filter input on arrival.\n2. Encode data on output.\n3. Use appropriate response headers.\n4. Implement Content Security Policy.",
+      "severity": "High",
+      "reference": "Cross Site Scripting (XSS) [Stored / Reflected]",
+      "owasp_category": "A03 - (CWE-79)",
+      "cwe_number": "CWE-79",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/79.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 2,
+      "vulnerability_name": "Cross Site Scripting (XSS) via File Upload",
+      "description": "XSS through file upload occurs when uploaded content is insufficiently validated or encoded and can be interpreted as active content (e.g., SVG, HTML file upload).",
+      "steps_to_reproduce": "1. Login using the provided credentials.\n2. Navigate to the relevant module.\n3. Upload a malicious file (e.g., test.svg with script).\n4. Intercept and modify the request using Burp Suite.\n5. Observe successful storage and rendering of the file.",
+      "remediation": "1. Strictly validate uploaded files.\n2. Validate content type and extension.\n3. Store uploads outside executable web paths.\n4. Encode output and serve with Content-Disposition: attachment.\n5. Use Content Security Policy.",
+      "severity": "High",
+      "reference": "Cross Site Scripting (XSS) [Stored / Reflected]",
+      "owasp_category": "A03 - (CWE-79)",
+      "cwe_number": "CWE-79",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/79.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 3,
+      "vulnerability_name": "Deprecated X-XSS-Protection Header",
+      "description": "The application uses the deprecated X-XSS-Protection HTTP response header. Modern browsers have removed support for this header because it can introduce security vulnerabilities in certain contexts.",
+      "steps_to_reproduce": "1. Visit target URL: http://localhost:5173/report-generator\n2. Intercept the request.\n3. Send to Repeater.\n4. Inspect the response headers.",
+      "remediation": "1. Remove deprecated X-XSS-Protection header.\n2. Implement Content Security Policy (CSP).\n3. Implement input validation and output encoding.\n4. Configure secure cookie settings.",
+      "severity": "Low",
+      "reference": "Deprecated X-XSS-Protection Header",
+      "owasp_category": "A05 - (CWE-1021)",
+      "cwe_number": "CWE-1021",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/1021.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 4,
+      "vulnerability_name": "SQL Injection (Blind / Error-Based)",
+      "description": "SQL injection is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database, allowing unauthorized data retrieval or modification.",
+      "steps_to_reproduce": "1. Navigate to search or login parameter.\n2. Inject payload: ' OR '1'='1.\n3. Observe database error or authentication bypass.",
+      "remediation": "1. Use parameterized queries / prepared statements for all SQL execution.\n2. Use Object Relational Mapping (ORM) safely.\n3. Enforce principle of least privilege on database accounts.",
+      "severity": "Critical",
+      "reference": "SQL Injection",
+      "owasp_category": "A03 - (CWE-89)",
+      "cwe_number": "CWE-89",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/89.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 5,
+      "vulnerability_name": "Missing Strict-Transport-Security (HSTS) Header",
+      "description": "HTTP Strict Transport Security (HSTS) enforces secure HTTPS connections, preventing Man-in-the-Middle (MITM) and SSL-stripping attacks.",
+      "steps_to_reproduce": "1. Send a request to the application over HTTPS.\n2. Analyze response headers.\n3. Note absence of Strict-Transport-Security header.",
+      "remediation": "1. Add Strict-Transport-Security header: max-age=31536000; includeSubDomains; preload.",
+      "severity": "Low",
+      "reference": "HSTS Header",
+      "owasp_category": "A05 - (CWE-319)",
+      "cwe_number": "CWE-319",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/319.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 6,
+      "vulnerability_name": "CORS Misconfiguration (Arbitrary Origin Allowed)",
+      "description": "The application's Cross-Origin Resource Sharing (CORS) policy reflects arbitrary origins or allows wildcard with credentials, enabling malicious third-party websites to extract sensitive user data.",
+      "steps_to_reproduce": "1. Send request with header 'Origin: https://attacker.com'.\n2. Check response for 'Access-Control-Allow-Origin: https://attacker.com' and 'Access-Control-Allow-Credentials: true'.",
+      "remediation": "1. Whitelist only trusted domains for CORS.\n2. Do not reflect arbitrary Origin headers when Access-Control-Allow-Credentials is true.",
+      "severity": "Medium",
+      "reference": "CORS Misconfiguration",
+      "owasp_category": "A07 - (CWE-942)",
+      "cwe_number": "CWE-942",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/942.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 7,
+      "vulnerability_name": "Insecure Direct Object Reference (IDOR)",
+      "description": "The application uses user-supplied input to access objects directly without proper access control checks, allowing unauthorized users to view or modify records belonging to other users.",
+      "steps_to_reproduce": "1. Login as User A and view profile with ID 101.\n2. Change request parameter ID to 102.\n3. Observe unauthorized access to User B's sensitive data.",
+      "remediation": "1. Implement robust server-side authorization checks on all resource endpoints.\n2. Use non-sequential random identifiers (UUIDs) where applicable.",
+      "severity": "High",
+      "reference": "Broken Object Level Authorization (BOLA/IDOR)",
+      "owasp_category": "A01 - (CWE-639)",
+      "cwe_number": "CWE-639",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/639.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    },
+    {
+      "id": 8,
+      "vulnerability_name": "Clickjacking / Missing X-Frame-Options",
+      "description": "The web page does not restrict framing via X-Frame-Options or Content-Security-Policy frame-ancestors, enabling attackers to render the page inside a transparent iframe and trick users into clicking buttons.",
+      "steps_to_reproduce": "1. Create an HTML file with <iframe src='TARGET_URL'></iframe>.\n2. Open in browser and verify the application renders successfully within the iframe.",
+      "remediation": "1. Configure 'X-Frame-Options: DENY' or 'SAMEORIGIN'.\n2. Implement Content Security Policy with 'frame-ancestors 'self''.",
+      "severity": "Medium",
+      "reference": "Clickjacking Protection",
+      "owasp_category": "A05 - (CWE-1021)",
+      "cwe_number": "CWE-1021",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/1021.html",
+      "created_at": "2026-09-04T05:54:53.947Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": 1,
+      "project_id": 1,
+      "vulnerability_name": "Cross Site Scripting (XSS) [Stored / Reflected]",
+      "description": "Cross-Site Scripting attacks occur when malicious scripts are injected into otherwise trusted websites. An attacker can use XSS to send a malicious script to an unsuspecting user.",
+      "steps_to_reproduce": "1. Go to Collection Details.\n2. Enter the necessary details.\n3. Intercept the request.\n4. Replace the remarks value with an XSS payload.\n5. Observe that it is stored and executed in the browser.",
+      "remediation": "1. Filter input on arrival.\n2. Encode data on output.\n3. Use appropriate response headers.\n4. Implement Content Security Policy.",
+      "severity": "High",
+      "reference": null,
+      "owasp_category": "A03 - (CWE-79)",
+      "cwe_number": "CWE-79",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/79.html",
+      "status": "Open",
+      "created_at": "2026-09-04T06:18:58.313Z",
+      "updated_at": "2026-09-04T06:18:58.313Z"
+    },
+    {
+      "id": 2,
+      "project_id": 1,
+      "vulnerability_name": "SQL Injection (Blind / Error-Based)",
+      "description": "SQL injection is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database, allowing unauthorized data retrieval or modification.",
+      "steps_to_reproduce": "1. Navigate to search or login parameter.\n2. Inject payload: ' OR '1'='1.\n3. Observe database error or authentication bypass.",
+      "remediation": "1. Use parameterized queries / prepared statements for all SQL execution.\n2. Use Object Relational Mapping (ORM) safely.\n3. Enforce principle of least privilege on database accounts.",
+      "severity": "Critical",
+      "reference": null,
+      "owasp_category": "A03 - (CWE-89)",
+      "cwe_number": "CWE-89",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/89.html",
+      "status": "Open",
+      "created_at": "2026-09-04T06:18:58.315Z",
+      "updated_at": "2026-09-04T06:18:58.315Z"
+    },
+    {
+      "id": 3,
+      "project_id": 1,
+      "vulnerability_name": "Missing Strict-Transport-Security (HSTS) Header",
+      "description": "HTTP Strict Transport Security (HSTS) enforces secure HTTPS connections, preventing Man-in-the-Middle (MITM) and SSL-stripping attacks.",
+      "steps_to_reproduce": "1. Send a request to the application over HTTPS.\n2. Analyze response headers.\n3. Note absence of Strict-Transport-Security header.",
+      "remediation": "1. Add Strict-Transport-Security header: max-age=31536000; includeSubDomains; preload.",
+      "severity": "Low",
+      "reference": null,
+      "owasp_category": "A05 - (CWE-319)",
+      "cwe_number": "CWE-319",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/319.html",
+      "status": "Open",
+      "created_at": "2026-09-04T06:18:58.317Z",
+      "updated_at": "2026-09-04T06:18:58.317Z"
+    },
+    {
+      "id": 4,
+      "project_id": 1,
+      "vulnerability_name": "CORS Misconfiguration (Arbitrary Origin Allowed)",
+      "description": "The application's Cross-Origin Resource Sharing (CORS) policy reflects arbitrary origins or allows wildcard with credentials, enabling malicious third-party websites to extract sensitive user data.",
+      "steps_to_reproduce": "1. Send request with header 'Origin: https://attacker.com'.\n2. Check response for 'Access-Control-Allow-Origin: https://attacker.com' and 'Access-Control-Allow-Credentials: true'.",
+      "remediation": "1. Whitelist only trusted domains for CORS.\n2. Do not reflect arbitrary Origin headers when Access-Control-Allow-Credentials is true.",
+      "severity": "Medium",
+      "reference": null,
+      "owasp_category": "A07 - (CWE-942)",
+      "cwe_number": "CWE-942",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/942.html",
+      "status": "Open",
+      "created_at": "2026-09-04T06:18:58.318Z",
+      "updated_at": "2026-09-04T06:18:58.318Z"
+    },
+    {
+      "id": 5,
+      "project_id": 2,
+      "vulnerability_name": "Insecure Direct Object Reference (IDOR)",
+      "description": "The application uses user-supplied input to access objects directly without proper access control checks, allowing unauthorized users to view or modify records belonging to other users.",
+      "steps_to_reproduce": "1. Login as User A and view profile with ID 101.\n2. Change request parameter ID to 102.\n3. Observe unauthorized access to User B's sensitive data.",
+      "remediation": "1. Implement robust server-side authorization checks on all resource endpoints.\n2. Use non-sequential random identifiers (UUIDs) where applicable.",
+      "severity": "High",
+      "reference": null,
+      "owasp_category": "A01 - (CWE-639)",
+      "cwe_number": "CWE-639",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/639.html",
+      "status": "Open",
+      "created_at": "2026-09-04T07:04:06.007Z",
+      "updated_at": "2026-09-04T07:04:06.007Z"
+    },
+    {
+      "id": 6,
+      "project_id": 2,
+      "vulnerability_name": "CORS Misconfiguration (Arbitrary Origin Allowed)",
+      "description": "The application's Cross-Origin Resource Sharing (CORS) policy reflects arbitrary origins or allows wildcard with credentials, enabling malicious third-party websites to extract sensitive user data.",
+      "steps_to_reproduce": "1. Send request with header 'Origin: https://attacker.com'.\n2. Check response for 'Access-Control-Allow-Origin: https://attacker.com' and 'Access-Control-Allow-Credentials: true'.",
+      "remediation": "1. Whitelist only trusted domains for CORS.\n2. Do not reflect arbitrary Origin headers when Access-Control-Allow-Credentials is true.",
+      "severity": "Medium",
+      "reference": null,
+      "owasp_category": "A07 - (CWE-942)",
+      "cwe_number": "CWE-942",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/942.html",
+      "status": "Open",
+      "created_at": "2026-09-04T07:04:06.007Z",
+      "updated_at": "2026-09-04T07:04:06.007Z"
+    },
+    {
+      "id": 7,
+      "project_id": 2,
+      "vulnerability_name": "Missing Strict-Transport-Security (HSTS) Header",
+      "description": "HTTP Strict Transport Security (HSTS) enforces secure HTTPS connections, preventing Man-in-the-Middle (MITM) and SSL-stripping attacks.",
+      "steps_to_reproduce": "1. Send a request to the application over HTTPS.\n2. Analyze response headers.\n3. Note absence of Strict-Transport-Security header.",
+      "remediation": "1. Add Strict-Transport-Security header: max-age=31536000; includeSubDomains; preload.",
+      "severity": "Low",
+      "reference": null,
+      "owasp_category": "A05 - (CWE-319)",
+      "cwe_number": "CWE-319",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/319.html",
+      "status": "Open",
+      "created_at": "2026-09-04T07:04:06.008Z",
+      "updated_at": "2026-09-04T07:04:06.008Z"
+    }
+  ],
+  "activity_logs": [
+    {
+      "id": 80,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Security Headers Audit",
+      "details": "Automated test of shcheck security headers scan",
+      "timestamp": "2026-09-10T11:19:53.266Z"
+    },
+    {
+      "id": 79,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 0/31 items on 'http://vapt.com' for session date 2026-09-09",
+      "timestamp": "2026-09-09T05:10:12.179Z"
+    },
+    {
+      "id": 78,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 0/31 items on 'http://newVAPT.com' for session date 2026-09-09",
+      "timestamp": "2026-09-09T05:10:09.241Z"
+    },
+    {
+      "id": 77,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 0/31 items on 'Security Audit Scope' for session date 2026-09-09",
+      "timestamp": "2026-09-09T05:10:01.156Z"
+    },
+    {
+      "id": 76,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 1/31 items on 'Security Audit Scope' for session date 2026-09-09",
+      "timestamp": "2026-09-09T05:09:59.448Z"
+    },
+    {
+      "id": 75,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 1/31 items on 'Security Audit Scope' for session date 2026-09-09",
+      "timestamp": "2026-09-09T05:09:56.966Z"
+    },
+    {
+      "id": 74,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-09T05:08:53.483Z"
+    },
+    {
+      "id": 73,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 0/31 items on 'Security Audit Scope' for session date 2026-09-05",
+      "timestamp": "2026-09-05T07:22:59.287Z"
+    },
+    {
+      "id": 72,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 1/31 items on 'Security Audit Scope' for session date 2026-09-05",
+      "timestamp": "2026-09-05T07:22:57.677Z"
+    },
+    {
+      "id": 71,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 1/31 items on 'Security Audit Scope' for session date 2026-09-05",
+      "timestamp": "2026-09-05T07:22:55.542Z"
+    },
+    {
+      "id": 70,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-05T07:22:08.936Z"
+    },
+    {
+      "id": 69,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:30:12.251Z"
+    },
+    {
+      "id": 68,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:28:34.894Z"
+    },
+    {
+      "id": 67,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:27:06.825Z"
+    },
+    {
+      "id": 66,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 10/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:20:10.576Z"
+    },
+    {
+      "id": 65,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 10/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:57.966Z"
+    },
+    {
+      "id": 64,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 9/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:57.757Z"
+    },
+    {
+      "id": 63,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 9/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:54.681Z"
+    },
+    {
+      "id": 62,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 8/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:51.128Z"
+    },
+    {
+      "id": 61,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 7/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:49.319Z"
+    },
+    {
+      "id": 60,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 6/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:47.279Z"
+    },
+    {
+      "id": 59,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 5/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:45.865Z"
+    },
+    {
+      "id": 58,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 4/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:44.297Z"
+    },
+    {
+      "id": 57,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 3/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:43.036Z"
+    },
+    {
+      "id": 56,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 2/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:41.715Z"
+    },
+    {
+      "id": 55,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 1/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:39.669Z"
+    },
+    {
+      "id": 54,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 0/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:32.324Z"
+    },
+    {
+      "id": 53,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 8/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:19:04.782Z"
+    },
+    {
+      "id": 52,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 8/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:18:49.452Z"
+    },
+    {
+      "id": 51,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 8/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:18:42.600Z"
+    },
+    {
+      "id": 50,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 7/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:18:40.710Z"
+    },
+    {
+      "id": 49,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 6/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:18:39.263Z"
+    },
+    {
+      "id": 48,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 5/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:18:37.658Z"
+    },
+    {
+      "id": 47,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 4/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:18:35.667Z"
+    },
+    {
+      "id": 46,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 3/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:17:58.264Z"
+    },
+    {
+      "id": 45,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 2/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:17:56.172Z"
+    },
+    {
+      "id": 44,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 1/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:17:48.367Z"
+    },
+    {
+      "id": 43,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 2/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:17:44.926Z"
+    },
+    {
+      "id": 42,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 2/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:17:42.972Z"
+    },
+    {
+      "id": 41,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 2/31 items on 'https://vapt.bisag.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:17:40.858Z"
+    },
+    {
+      "id": 40,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Daily Checklist Updated",
+      "details": "Tested 2/30 items on 'https://cyber.gov.in' for session date 2026-09-04",
+      "timestamp": "2026-09-04T17:16:34.124Z"
+    },
+    {
+      "id": 39,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:16:34.104Z"
+    },
+    {
+      "id": 38,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:16:18.557Z"
+    },
+    {
+      "id": 37,
+      "user_id": null,
+      "timestamp": "2026-09-04T17:16:03.322Z"
+    },
+    {
+      "id": 36,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:16:03.311Z"
+    },
+    {
+      "id": 35,
+      "user_id": null,
+      "timestamp": "2026-09-04T17:15:50.254Z"
+    },
+    {
+      "id": 34,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:15:50.242Z"
+    },
+    {
+      "id": 33,
+      "user_id": null,
+      "timestamp": "2026-09-04T17:14:39.250Z"
+    },
+    {
+      "id": 32,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:14:39.224Z"
+    },
+    {
+      "id": 31,
+      "user_id": 2,
+      "username": "nensi112",
+      "role": "Security Analyst",
+      "action": "User Login",
+      "details": "User logged in with role Security Analyst",
+      "timestamp": "2026-09-04T17:08:54.674Z"
+    },
+    {
+      "id": 30,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:08:54.566Z"
+    },
+    {
+      "id": 29,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:01:48.903Z"
+    },
+    {
+      "id": 28,
+      "user_id": 2,
+      "username": "nensi112",
+      "role": "Security Analyst",
+      "action": "User Login",
+      "details": "User logged in with role Security Analyst",
+      "timestamp": "2026-09-04T17:00:13.187Z"
+    },
+    {
+      "id": 27,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T17:00:13.028Z"
+    },
+    {
+      "id": 26,
+      "user_id": 2,
+      "username": "nensi112",
+      "role": "Security Analyst",
+      "action": "User Login",
+      "details": "User logged in with role Security Analyst",
+      "timestamp": "2026-09-04T07:48:33.803Z"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T07:47:34.753Z"
+    },
+    {
+      "id": 24,
+      "user_id": 2,
+      "username": "nensi112",
+      "role": "Security Analyst",
+      "action": "User Login",
+      "details": "User logged in with role Security Analyst",
+      "timestamp": "2026-09-04T07:46:15.880Z"
+    },
+    {
+      "id": 23,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T07:46:15.699Z"
+    },
+    {
+      "id": 22,
+      "user_id": 2,
+      "username": "nensi112",
+      "role": "Security Analyst",
+      "action": "User Login",
+      "details": "User logged in with role Security Analyst",
+      "timestamp": "2026-09-04T07:31:15.838Z"
+    },
+    {
+      "id": 21,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T07:30:58.113Z"
+    },
+    {
+      "id": 20,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T07:25:19.252Z"
+    },
+    {
+      "id": 19,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T07:20:57.334Z"
+    },
+    {
+      "id": 18,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T07:20:22.646Z"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Findings Updated",
+      "details": "Updated 3 finding(s) for project 'new VAPT'",
+      "timestamp": "2026-09-04T07:04:06.008Z"
+    },
+    {
+      "id": 16,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Project Created",
+      "details": "Created assessment project 'new VAPT' for target http://newVAPT.com",
+      "timestamp": "2026-09-04T07:04:05.989Z"
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Analyst Registered",
+      "details": "Registered dynamic security analyst 'HarpalSinh Rathod'",
+      "timestamp": "2026-09-04T06:20:12.455Z"
+    },
+    {
+      "id": 14,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Findings Updated",
+      "details": "Updated 4 finding(s) for project 'design and devleop VAPT'",
+      "timestamp": "2026-09-04T06:18:58.319Z"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Project Updated",
+      "details": "Updated project 'design and devleop VAPT'",
+      "timestamp": "2026-09-04T06:18:58.303Z"
+    },
+    {
+      "id": 12,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Analyst Registered",
+      "details": "Registered dynamic security analyst 'Nensi  Borad'",
+      "timestamp": "2026-09-04T06:18:40.250Z"
+    },
+    {
+      "id": 11,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Knowledge Base Deleted",
+      "details": "Deleted vulnerability 'Custom Test Zero-Day Vulnerability'",
+      "timestamp": "2026-09-04T06:17:35.528Z"
+    },
+    {
+      "id": 10,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Knowledge Base Added",
+      "details": "Added new vulnerability 'Custom Test Zero-Day Vulnerability' (Critical)",
+      "timestamp": "2026-09-04T06:17:31.283Z"
+    },
+    {
+      "id": 9,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Analyst Registered",
+      "details": "Registered dynamic security analyst 'Rohit Sharma Test Analyst'",
+      "timestamp": "2026-09-04T06:17:26.581Z"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Findings Added",
+      "details": "Added 4 finding(s) to project 'design and devleop VAPT'",
+      "timestamp": "2026-09-04T06:07:08.382Z"
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Project Created",
+      "details": "Created assessment project 'design and devleop VAPT' for target http://vapt.com",
+      "timestamp": "2026-09-04T06:07:08.368Z"
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Project Deleted",
+      "details": "Deleted project 'National Cyber Portal' and associated findings",
+      "timestamp": "2026-09-04T05:56:34.968Z"
+    },
+    {
+      "id": 5,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "Project Created",
+      "details": "Created assessment project 'National Cyber Portal' for target https://cyber.gov.in",
+      "timestamp": "2026-09-04T05:56:34.946Z"
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T05:56:34.854Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T05:56:21.918Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "User Login",
+      "details": "User logged in with role Admin",
+      "timestamp": "2026-09-04T05:55:23.204Z"
+    },
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "role": "Admin",
+      "action": "System Initialized",
+      "details": "VAPT Security Command Center online & dynamic",
+      "timestamp": "2026-09-04T05:54:53.948Z"
+    }
+  ],
+  "checklist_sessions": [
+    {
+      "id": 4,
+      "user_id": 1,
+      "username": "admin",
+      "session_date": "2026-09-10",
+      "target_url": "http://hello.com",
+      "project_name": "hello",
+      "checked_items": {},
+      "notes": "",
+      "tested_count": 0,
+      "total_count": 31,
+      "updated_at": "2026-09-10T13:53:12.230Z"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "session_date": "2026-09-09",
+      "target_url": "http://vapt.com",
+      "project_name": "design and devleop VAPT",
+      "checked_items": {},
+      "notes": "",
+      "tested_count": 0,
+      "total_count": 31,
+      "updated_at": "2026-09-10T09:26:32.875Z"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "session_date": "2026-09-05",
+      "target_url": "",
+      "project_name": "",
+      "checked_items": {},
+      "notes": "",
+      "tested_count": 0,
+      "total_count": 31,
+      "updated_at": "2026-09-05T07:22:59.284Z"
+    },
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "session_date": "2026-09-04",
+      "target_url": "https://vapt.bisag.gov.in",
+      "project_name": "National Cyber Portal Audit",
+      "checked_items": {
+        "Absence of Anti-CSRF Token": {
+          "tested": true,
+          "status": "PASSED",
+          "timestamp": "2026-09-04T17:19:39.652Z"
+        },
+        "Account Takeover": {
+          "tested": true,
+          "status": "FAILED",
+          "timestamp": "2026-09-04T17:19:41.701Z"
+        },
+        "API Mass Assignment": {
+          "tested": true,
+          "status": "PASSED",
+          "timestamp": "2026-09-04T17:19:43.019Z"
+        },
+        "Broken Access Control": {
+          "tested": true,
+          "status": "PASSED",
+          "timestamp": "2026-09-04T17:19:44.282Z"
+        },
+        "Cross Site Scripting (XSS) [Stored/Reflected]": {
+          "tested": true,
+          "status": "PASSED",
+          "timestamp": "2026-09-04T17:19:45.848Z"
+        },
+        "Data Integrity Failure": {
+          "tested": true,
+          "status": "FAILED",
+          "timestamp": "2026-09-04T17:19:47.264Z"
+        },
+        "Cross-Site Request Forgery (CSRF)": {
+          "tested": true,
+          "status": "FAILED",
+          "timestamp": "2026-09-04T17:19:49.299Z"
+        },
+        "Cross Site Scripting (XSS) via File Upload": {
+          "tested": true,
+          "status": "PASSED",
+          "timestamp": "2026-09-04T17:19:51.108Z"
+        },
+        "Deprecated X-XSS-Protection Headers": {
+          "tested": true,
+          "status": "FAILED",
+          "timestamp": "2026-09-04T17:19:54.665Z"
+        },
+        "Developer Mode Detection Bypass": {
+          "tested": true,
+          "status": "PASSED",
+          "timestamp": "2026-09-04T17:19:57.950Z"
+        }
+      },
+      "notes": "Initial automated recon completed",
+      "tested_count": 10,
+      "total_count": 31,
+      "updated_at": "2026-09-04T17:20:10.574Z"
+    }
+  ]
+}
