@@ -61,11 +61,15 @@ function handleLocalFallback(method, url, data) {
   }
   if (cleanUrl.startsWith('projects/') && cleanUrl.endsWith('/findings') && method === 'post') {
     const projectId = cleanUrl.split('/')[1];
-    return { data: localStore.addFindingsToProject(projectId, data?.findings) };
+    return { data: localStore.addFindingsToProject(projectId, data?.findings || data) };
   }
   if (cleanUrl.startsWith('projects/') && method === 'get') {
     const id = cleanUrl.split('/')[1];
     return { data: localStore.getProjectById(id) };
+  }
+  if (cleanUrl.startsWith('projects/') && method === 'put') {
+    const id = cleanUrl.split('/')[1];
+    return { data: localStore.updateProject(id, data) };
   }
   if (cleanUrl === 'projects' && method === 'post') {
     return { data: localStore.createProject(data) };
@@ -129,6 +133,13 @@ function handleLocalFallback(method, url, data) {
   // 7. Analysts
   if (cleanUrl === 'analysts' && method === 'get') {
     return { data: localStore.getAnalysts() };
+  }
+  if (cleanUrl === 'analysts' && method === 'post') {
+    return { data: localStore.createAnalyst(data) };
+  }
+  if (cleanUrl.startsWith('analysts/') && method === 'delete') {
+    const id = cleanUrl.split('/')[1];
+    return { data: localStore.deleteAnalyst(id) };
   }
 
   // 8. Activity Logs
