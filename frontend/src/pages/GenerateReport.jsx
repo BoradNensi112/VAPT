@@ -582,7 +582,8 @@ export default function GenerateReport() {
           </div>
         </div>
 
-        <div className="form-grid-3">
+        {/* Row 1: Top 4 Primary Project Parameters */}
+        <div className="form-grid-4">
           <div className="form-group">
             <label className="form-label">PROJECT NAME *</label>
             <input
@@ -631,7 +632,10 @@ export default function GenerateReport() {
               onChange={(e) => setProject({ ...project, assessmentDate: e.target.value })}
             />
           </div>
+        </div>
 
+        {/* Row 2: Bottom 2 Concern Authority Fields */}
+        <div className="form-grid-2" style={{ marginTop: '16px' }}>
           <div className="form-group">
             <label className="form-label">CONCERN PROJECT MANAGER</label>
             <input
