@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import HolographicShield from '../components/HolographicShield';
 import api from '../services/api';
+import { downloadVaptExcelReport } from '../services/excelExportService';
 import '../styles/dashboard.css';
 
 export default function Dashboard() {
@@ -122,6 +123,22 @@ export default function Dashboard() {
     const day = String(d.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }, []);
+
+  const handleExportAssessmentExcel = async (a) => {
+    try {
+      const res = await api.get(`/projects/${a.projectId}`);
+      const projData = res.data?.project || { project_name: a.name, target_url: a.target, security_analysts: a.analyst };
+      const findings = res.data?.findings || [];
+      await downloadVaptExcelReport({
+        project: projData,
+        findings,
+        assessmentDate: projData.created_at
+      });
+    } catch (err) {
+      console.error('Dashboard export error:', err);
+      alert('Failed to export Excel report.');
+    }
+  };
 
   // Handle Creating New Assessment
   const handleCreateAssessment = async (e, nextAction = 'save') => {
@@ -1195,13 +1212,14 @@ export default function Dashboard() {
                       </td>
                       <td>
                         <div className="table-actions-cell" style={{ justifyContent: 'center' }}>
-                          <a
-                            href={`http://localhost:5000/api/reports/export/${a.projectId}`}
+                          <button
+                            type="button"
+                            onClick={() => handleExportAssessmentExcel(a)}
                             className="table-action-btn"
                             title="Download Official Report"
                           >
                             <FileSpreadsheet size={13} />
-                          </a>
+                          </button>
                           <button
                             onClick={() => navigate('/compare-reports')}
                             className="table-action-btn"

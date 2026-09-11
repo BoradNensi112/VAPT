@@ -32,58 +32,115 @@ class ReportExportService {
     const GREEN_BG = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FFC8E6C9' }
+      fgColor: { argb: 'FFC8E6C9' } // Official BISAG-N VAPT Green
     };
 
     const BLUE_HEADER_BG = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FFD0E1FD' }
+      fgColor: { argb: 'FFD0E1FD' } // Official BISAG-N VAPT Header Blue
     };
 
     worksheet.columns = [
       { width: 8 },   // A: S.No
-      { width: 32 },  // B: Vulnerability Name
-      { width: 45 },  // C: Description
-      { width: 45 },  // D: Step to reproduce
-      { width: 45 },  // E: Remediation
+      { width: 34 },  // B: Vulnerability Name
+      { width: 44 },  // C: Description
+      { width: 44 },  // D: Step to reproduce
+      { width: 44 },  // E: Remediation
       { width: 14 },  // F: Severity
       { width: 30 },  // G: Reference
-      { width: 22 },  // H: OWASP Category - CWE
-      { width: 35 }   // I: CWE Reference
+      { width: 22 },  // H: OWASP Category – CWE number
+      { width: 36 }   // I: CWE Reference
     ];
 
     // Row 5: Title
     worksheet.mergeCells('B5:D5');
     const titleCell = worksheet.getCell('B5');
     titleCell.value = 'Manual Testing Report (VAPT)';
-    titleCell.font = { name: 'Arial', size: 11, bold: true };
+    titleCell.font = { name: 'Times New Roman', size: 11, bold: true };
     titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
     ['B5', 'C5', 'D5'].forEach(cell => {
       worksheet.getCell(cell).border = BORDER_STYLE;
     });
+    worksheet.getRow(5).height = 24;
 
-    // Row 8 to 12: Project Metadata (Green Table)
-    const metaRows = [
-      { row: 8, label: 'Project Name:', value: project.project_name },
-      { row: 9, label: 'URL:', value: project.target_url },
-      { row: 10, label: 'Security Analyst:', value: project.security_analysts },
-      { row: 11, label: 'Project Manager:', value: project.project_managers },
-      { row: 12, label: 'Additional Director cum CISO:', value: project.ciso_name }
-    ];
+    const dateStr = project.created_at ? new Date(project.created_at).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
+    const projectName = project.project_name || 'VAPT Assessment Target';
+    const targetUrl = project.target_url || 'http://target.gov.in';
+    const analysts = project.security_analysts || 'Ankit Nandaniya';
 
-    metaRows.forEach(m => {
-      worksheet.mergeCells(`A${m.row}:I${m.row}`);
-      const rowCell = worksheet.getCell(`A${m.row}`);
-      rowCell.value = `${m.label} ${m.value || ''}`;
-      rowCell.fill = GREEN_BG;
-      rowCell.font = { name: 'Arial', size: 10, bold: true };
-      rowCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+    // Format Project Manager (Left: "Project Manager: ABCD, WXYZ")
+    let pmLeft = project.project_managers || 'ABCD, WXYZ';
+    if (!pmLeft.startsWith('Project Manager:')) {
+      pmLeft = `Project Manager: ${pmLeft}`;
+    }
+
+    // Format Concern Project Manager (Right: "Concern Project Manager: Shri ...")
+    let concernPm = 'Concern Project Manager: Shri ';
+    if (project.project_managers && project.project_managers.includes('Concern Project Manager:')) {
+      concernPm = project.project_managers;
+    }
+
+    // Format Concern Additional Director (Right: "Concern Additional Director: Shri ...")
+    let concernDirector = 'Concern Additional Director: Shri ';
+    if (project.ciso_name) {
+      concernDirector = project.ciso_name.startsWith('Concern Additional Director:')
+        ? project.ciso_name
+        : project.ciso_name.startsWith('Shri ')
+        ? `Concern Additional Director: ${project.ciso_name}`
+        : `Concern Additional Director: Shri ${project.ciso_name}`;
+    }
+
+    // Format Additional Director cum CISO (Left: "Additional Director cum CISO: Shri ...")
+    let cisoName = project.ciso_name || 'Shri ABCD';
+    if (!cisoName.startsWith('Additional Director cum CISO:')) {
+      cisoName = cisoName.startsWith('Shri ')
+        ? `Additional Director cum CISO: ${cisoName}`
+        : `Additional Director cum CISO: Shri ${cisoName}`;
+    }
+
+    // Helper to apply green rows
+    const applyGreenRow = (rowNumber, leftMerge, leftText, rightMerge = null, rightText = null) => {
+      worksheet.mergeCells(leftMerge);
+      const leftCell = worksheet.getCell(leftMerge.split(':')[0]);
+      leftCell.value = leftText;
+      leftCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+      leftCell.font = { name: 'Times New Roman', size: 10, bold: true };
+
+      if (rightMerge && rightText !== null) {
+        worksheet.mergeCells(rightMerge);
+        const rightCell = worksheet.getCell(rightMerge.split(':')[0]);
+        rightCell.value = rightText;
+        rightCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
+        rightCell.font = { name: 'Times New Roman', size: 10, bold: true };
+      }
 
       for (let col = 1; col <= 9; col++) {
-        worksheet.getRow(m.row).getCell(col).border = BORDER_STYLE;
+        const cell = worksheet.getRow(rowNumber).getCell(col);
+        cell.fill = GREEN_BG;
+        cell.border = BORDER_STYLE;
+        if (!cell.font) {
+          cell.font = { name: 'Times New Roman', size: 10, bold: true };
+        }
       }
-    });
+      worksheet.getRow(rowNumber).height = 24;
+    };
+
+    // Row 8: Left: Project Name | Right: Date: 00/00/2026
+    applyGreenRow(8, 'A8:C8', `Project Name: ${projectName}`, 'D8:I8', `Date: ${dateStr}`);
+
+    // Row 9: URL: ...
+    const urlLabel = targetUrl.toLowerCase().endsWith('.apk') ? 'APK' : 'URL';
+    applyGreenRow(9, 'A9:I9', `${urlLabel}: ${targetUrl}`);
+
+    // Row 10: Left: Security Analyst: ... | Right: Concern Project Manager: Shri ...
+    applyGreenRow(10, 'A10:C10', `Security Analyst: ${analysts}`, 'D10:I10', concernPm);
+
+    // Row 11: Left: Project Manager: ABCD, WXYZ | Right: Concern Additional Director: Shri ...
+    applyGreenRow(11, 'A11:C11', pmLeft, 'D11:I11', concernDirector);
+
+    // Row 12: Additional Director cum CISO: Shri ...
+    applyGreenRow(12, 'A12:I12', cisoName);
 
     // Row 14: Findings Header (Blue Header)
     const headerRowIdx = 14;
@@ -104,7 +161,7 @@ class ReportExportService {
       const cell = headerRow.getCell(idx + 1);
       cell.value = h;
       cell.fill = BLUE_HEADER_BG;
-      cell.font = { name: 'Arial', size: 9, bold: true };
+      cell.font = { name: 'Times New Roman', size: 10, bold: true };
       cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
       cell.border = BORDER_STYLE;
     });
@@ -114,47 +171,89 @@ class ReportExportService {
     let currentRowIdx = 15;
     findings.forEach((f, idx) => {
       const row = worksheet.getRow(currentRowIdx);
+      const stepsFormatted = (f.steps_to_reproduce || f.steps || '').replaceAll('$$', targetUrl.trim());
 
-      const values = [
-        idx + 1,
-        f.vulnerability_name,
-        f.description,
-        f.steps_to_reproduce,
-        f.remediation,
-        f.severity,
-        f.reference || f.vulnerability_name,
-        f.owasp_category,
-        f.cwe_url
-      ];
+      // Col 1: S.No
+      const c1 = row.getCell(1);
+      c1.value = idx + 1;
+      c1.alignment = { vertical: 'center', horizontal: 'center' };
 
-      values.forEach((val, cIdx) => {
-        const cell = row.getCell(cIdx + 1);
-        cell.value = val;
-        cell.font = { name: 'Arial', size: 9 };
-        cell.alignment = {
-          vertical: 'top',
-          horizontal: cIdx === 0 || cIdx === 5 ? 'center' : 'left',
-          wrapText: true
-        };
-        cell.border = BORDER_STYLE;
-      });
+      // Col 2: Vulnerability Name
+      const c2 = row.getCell(2);
+      c2.value = f.vulnerability_name || f.name || 'Security Finding';
+      c2.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
 
+      // Col 3: Description
+      const c3 = row.getCell(3);
+      c3.value = f.description || f.desc || '';
+      c3.alignment = { vertical: 'center', horizontal: 'left', wrapText: true };
+
+      // Col 4: Steps
+      const c4 = row.getCell(4);
+      c4.value = stepsFormatted;
+      c4.alignment = { vertical: 'center', horizontal: 'left', wrapText: true };
+
+      // Col 5: Remediation
+      const c5 = row.getCell(5);
+      c5.value = f.remediation || '';
+      c5.alignment = { vertical: 'center', horizontal: 'left', wrapText: true };
+
+      // Col 6: Severity
+      const c6 = row.getCell(6);
+      c6.value = f.severity || 'Medium';
+      c6.alignment = { vertical: 'center', horizontal: 'center' };
+
+      // Col 7: Reference
+      const c7 = row.getCell(7);
+      const refText = f.reference || f.vulnerability_name || 'OWASP / CWE';
+      if (f.cwe_url) {
+        c7.value = { text: refText, hyperlink: f.cwe_url };
+        c7.font = { name: 'Times New Roman', size: 10, color: { argb: 'FF0000FF' }, underline: true };
+      } else {
+        c7.value = refText;
+      }
+      c7.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
+
+      // Col 8: OWASP Category
+      const c8 = row.getCell(8);
+      c8.value = f.owasp_category || 'A03:2021-Injection';
+      c8.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
+
+      // Col 9: CWE Ref
+      const c9 = row.getCell(9);
+      const cweText = f.cwe_number || 'CWE-79';
+      const cweUrl = f.cwe_url || (cweText.includes('CWE') ? `https://cwe.mitre.org/data/definitions/${cweText.replace(/\D/g, '')}.html` : 'https://cwe.mitre.org');
+      c9.value = { text: cweText, hyperlink: cweUrl };
+      c9.font = { name: 'Times New Roman', size: 10, color: { argb: 'FF0000FF' }, underline: true };
+      c9.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
+
+      for (let col = 1; col <= 9; col++) {
+        const c = row.getCell(col);
+        c.border = BORDER_STYLE;
+        if (!c.font || !c.font.color) {
+          c.font = { name: 'Times New Roman', size: 10 };
+        }
+      }
+
+      row.height = 75;
       currentRowIdx++;
     });
 
     if (findings.length === 0) {
       const row = worksheet.getRow(currentRowIdx);
-      row.getCell(1).value = 'No vulnerabilities reported for this project.';
+      row.getCell(1).value = 'No vulnerabilities reported for this assessment target.';
       worksheet.mergeCells(`A${currentRowIdx}:I${currentRowIdx}`);
-      row.getCell(1).alignment = { horizontal: 'center' };
+      row.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' };
+      row.getCell(1).font = { name: 'Times New Roman', size: 10, italic: true };
       for (let col = 1; col <= 9; col++) row.getCell(col).border = BORDER_STYLE;
+      row.height = 30;
       currentRowIdx++;
     }
 
     // Row for Form No.
     currentRowIdx += 1;
     worksheet.getCell(`A${currentRowIdx}`).value = 'Form No. BISAG-SD/FR-207/201';
-    worksheet.getCell(`A${currentRowIdx}`).font = { name: 'Arial', size: 8, italic: true };
+    worksheet.getCell(`A${currentRowIdx}`).font = { name: 'Times New Roman', size: 8, italic: true };
     currentRowIdx += 2;
 
     // Remarks Section
@@ -162,73 +261,87 @@ class ReportExportService {
     const remarksHeaderCell = worksheet.getCell(`A${currentRowIdx}`);
     remarksHeaderCell.value = 'Remarks:';
     remarksHeaderCell.fill = GREEN_BG;
-    remarksHeaderCell.font = { name: 'Arial', size: 10, bold: true };
+    remarksHeaderCell.font = { name: 'Times New Roman', size: 10, bold: true };
     remarksHeaderCell.border = BORDER_STYLE;
+    for (let c = 1; c <= 9; c++) worksheet.getRow(currentRowIdx).getCell(c).border = BORDER_STYLE;
+    worksheet.getRow(currentRowIdx).height = 24;
     currentRowIdx++;
 
     worksheet.mergeCells(`A${currentRowIdx}:I${currentRowIdx}`);
     const remarksContentCell = worksheet.getCell(`A${currentRowIdx}`);
     remarksContentCell.value = project.remarks || '1. Functional Bugs are attached to in the Findings folder Under !';
-    remarksContentCell.font = { name: 'Arial', size: 9 };
+    remarksContentCell.font = { name: 'Times New Roman', size: 9 };
     remarksContentCell.border = BORDER_STYLE;
+    for (let c = 1; c <= 9; c++) worksheet.getRow(currentRowIdx).getCell(c).border = BORDER_STYLE;
+    worksheet.getRow(currentRowIdx).height = 45;
     currentRowIdx += 2;
 
     // Last Reported Vulnerabilities Status Section
-    const todayStr = new Date().toLocaleDateString('en-GB');
     worksheet.mergeCells(`A${currentRowIdx}:I${currentRowIdx}`);
     const statusHeaderCell = worksheet.getCell(`A${currentRowIdx}`);
-    statusHeaderCell.value = `According to Last Reported Vulnerabilities on Date: ${todayStr}`;
+    statusHeaderCell.value = `According to Last Reported Vulnerabilities on Date: ${dateStr}`;
     statusHeaderCell.fill = GREEN_BG;
-    statusHeaderCell.font = { name: 'Arial', size: 10, bold: true };
-    statusHeaderCell.alignment = { horizontal: 'center' };
+    statusHeaderCell.font = { name: 'Times New Roman', size: 10, bold: true };
+    statusHeaderCell.alignment = { vertical: 'middle', horizontal: 'center' };
     for (let c = 1; c <= 9; c++) worksheet.getRow(currentRowIdx).getCell(c).border = BORDER_STYLE;
+    worksheet.getRow(currentRowIdx).height = 24;
     currentRowIdx++;
 
     // Subheader: No | Vulnerability Name | Status
     worksheet.getCell(`B${currentRowIdx}`).value = 'No';
-    worksheet.getCell(`B${currentRowIdx}`).font = { bold: true };
+    worksheet.getCell(`B${currentRowIdx}`).font = { name: 'Times New Roman', size: 10, bold: true };
     worksheet.getCell(`B${currentRowIdx}`).border = BORDER_STYLE;
-    worksheet.getCell(`B${currentRowIdx}`).alignment = { horizontal: 'center' };
+    worksheet.getCell(`B${currentRowIdx}`).alignment = { vertical: 'middle', horizontal: 'center' };
 
     worksheet.mergeCells(`C${currentRowIdx}:E${currentRowIdx}`);
     const vulnHeader = worksheet.getCell(`C${currentRowIdx}`);
     vulnHeader.value = 'Vulnerability Name';
-    vulnHeader.font = { bold: true };
-    vulnHeader.alignment = { horizontal: 'center' };
+    vulnHeader.font = { name: 'Times New Roman', size: 10, bold: true };
+    vulnHeader.alignment = { vertical: 'middle', horizontal: 'center' };
     ['C', 'D', 'E'].forEach(col => worksheet.getCell(`${col}${currentRowIdx}`).border = BORDER_STYLE);
 
     worksheet.mergeCells(`F${currentRowIdx}:G${currentRowIdx}`);
     const statusCol = worksheet.getCell(`F${currentRowIdx}`);
     statusCol.value = 'Status';
-    statusCol.font = { bold: true };
-    statusCol.alignment = { horizontal: 'center' };
+    statusCol.font = { name: 'Times New Roman', size: 10, bold: true };
+    statusCol.alignment = { vertical: 'middle', horizontal: 'center' };
     ['F', 'G'].forEach(col => worksheet.getCell(`${col}${currentRowIdx}`).border = BORDER_STYLE);
+    worksheet.getRow(currentRowIdx).height = 22;
     currentRowIdx++;
 
     // Items list in Re-test Table
     findings.forEach((f, idx) => {
       worksheet.getCell(`B${currentRowIdx}`).value = idx + 1;
       worksheet.getCell(`B${currentRowIdx}`).border = BORDER_STYLE;
-      worksheet.getCell(`B${currentRowIdx}`).alignment = { horizontal: 'center' };
+      worksheet.getCell(`B${currentRowIdx}`).alignment = { vertical: 'middle', horizontal: 'center' };
+      worksheet.getCell(`B${currentRowIdx}`).font = { name: 'Times New Roman', size: 9 };
 
       worksheet.mergeCells(`C${currentRowIdx}:E${currentRowIdx}`);
       const vCell = worksheet.getCell(`C${currentRowIdx}`);
-      vCell.value = f.vulnerability_name;
+      vCell.value = f.vulnerability_name || f.name || 'Security Finding';
       vCell.border = BORDER_STYLE;
+      vCell.font = { name: 'Times New Roman', size: 9 };
       ['C', 'D', 'E'].forEach(col => worksheet.getCell(`${col}${currentRowIdx}`).border = BORDER_STYLE);
 
       worksheet.mergeCells(`F${currentRowIdx}:G${currentRowIdx}`);
       const sCell = worksheet.getCell(`F${currentRowIdx}`);
       sCell.value = f.status || 'Open';
       sCell.border = BORDER_STYLE;
-      sCell.alignment = { horizontal: 'center' };
+      sCell.alignment = { vertical: 'middle', horizontal: 'center' };
+      sCell.font = {
+        name: 'Times New Roman',
+        size: 9,
+        bold: true,
+        color: { argb: (f.status || '').toLowerCase() === 'closed' ? 'FF10B981' : 'FFEF4444' }
+      };
       ['F', 'G'].forEach(col => worksheet.getCell(`${col}${currentRowIdx}`).border = BORDER_STYLE);
 
+      worksheet.getRow(currentRowIdx).height = 20;
       currentRowIdx++;
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
-    return { buffer, projectName: project.project_name };
+    return { buffer, projectName };
   }
 
   static async getAnalytics(user) {
@@ -349,48 +462,38 @@ class ReportExportService {
   }
 
   static async compareProjects(baseProjectId, compareProjectId) {
-    const baseFindings = await db.query('SELECT * FROM findings WHERE project_id = $1', [baseProjectId]);
-    const compareFindings = await db.query('SELECT * FROM findings WHERE project_id = $1', [compareProjectId]);
+    const baseProject = await ProjectModel.findById(baseProjectId);
+    const compareProject = await ProjectModel.findById(compareProjectId);
 
-    const baseRows = baseFindings.rows || [];
-    const compareRows = compareFindings.rows || [];
+    if (!baseProject || !compareProject) {
+      throw { status: 404, message: 'One or both comparison projects not found' };
+    }
 
-    const baseMap = new Map();
-    baseRows.forEach(f => baseMap.set(f.vulnerability_name.toLowerCase(), f));
+    const baseFindings = await FindingModel.findByProjectId(baseProjectId);
+    const compareFindings = await FindingModel.findByProjectId(compareProjectId);
 
-    const compareMap = new Map();
-    compareRows.forEach(f => compareMap.set(f.vulnerability_name.toLowerCase(), f));
+    const baseNames = new Set(baseFindings.map(f => f.vulnerability_name));
+    const compNames = new Set(compareFindings.map(f => f.vulnerability_name));
 
-    const remediated = [];
-    const recurring = [];
-    const newFindings = [];
+    const resolved = baseFindings.filter(f => !compNames.has(f.vulnerability_name));
+    const newFindings = compareFindings.filter(f => !baseNames.has(f.vulnerability_name));
+    const persisting = compareFindings.filter(f => baseNames.has(f.vulnerability_name));
 
-    baseRows.forEach(bf => {
-      const match = compareMap.get(bf.vulnerability_name.toLowerCase());
-      if (!match || match.status === 'Closed') {
-        remediated.push(bf);
-      } else {
-        recurring.push({ initial: bf, current: match });
-      }
-    });
-
-    compareRows.forEach(cf => {
-      if (!baseMap.has(cf.vulnerability_name.toLowerCase())) {
-        newFindings.push(cf);
-      }
-    });
+    const totalBase = baseFindings.length || 1;
+    const reduction = Math.max(0, Math.round(((resolved.length - newFindings.length) / totalBase) * 100));
 
     return {
-      remediated,
-      recurring,
+      baseProject,
+      compareProject,
+      deltaStats: {
+        resolvedCount: resolved.length,
+        newCount: newFindings.length,
+        persistingCount: persisting.length,
+        riskReductionPercent: reduction
+      },
+      commonFindings: persisting,
       newFindings,
-      summary: {
-        totalInitial: baseRows.length,
-        totalCurrent: compareRows.length,
-        remediatedCount: remediated.length,
-        recurringCount: recurring.length,
-        newCount: newFindings.length
-      }
+      resolvedFindings: resolved
     };
   }
 }

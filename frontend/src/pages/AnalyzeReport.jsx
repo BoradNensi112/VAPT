@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import api from '../services/api';
 import { generateVaptPdfReport } from '../services/pdfExportService';
+import { downloadVaptExcelReport } from '../services/excelExportService';
 import '../styles/analyzeReport.css';
 
 export default function AnalyzeReport() {
@@ -130,6 +131,23 @@ export default function AnalyzeReport() {
     navigator.clipboard.writeText(url);
     setCopiedUrl(true);
     setTimeout(() => setCopiedUrl(false), 2000);
+  };
+
+  const handleExportExcel = async () => {
+    if (!activeProject && selectedProjectId === 'ALL') {
+      alert('Please select a specific target project to export Excel.');
+      return;
+    }
+    try {
+      await downloadVaptExcelReport({
+        project: activeProject || { project_name: 'All Projects VAPT Summary', target_url: 'Multiple Scope Targets' },
+        findings: projectFindings || [],
+        assessmentDate: activeProject?.created_at
+      });
+    } catch (err) {
+      console.error('Export error:', err);
+      alert('Failed to export Excel report.');
+    }
   };
 
   const handleExportPdf = () => {
@@ -363,14 +381,15 @@ export default function AnalyzeReport() {
                 <span>Executive PDF</span>
               </button>
 
-              <a
-                href={`http://localhost:5000/api/reports/export/${selectedProjectId}`}
+              <button
+                type="button"
+                onClick={handleExportExcel}
                 className="neo-glass-btn primary"
                 title="Download official Excel audit report"
               >
                 <FileSpreadsheet size={15} />
                 <span>Export Excel</span>
-              </a>
+              </button>
             </div>
           )}
         </div>

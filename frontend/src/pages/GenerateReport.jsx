@@ -35,6 +35,7 @@ import {
 } from '../data/vulnerabilityData';
 import api from '../services/api';
 import { generateVaptPdfReport } from '../services/pdfExportService';
+import { downloadVaptExcelReport } from '../services/excelExportService';
 import '../styles/reportGenerator.css';
 
 const SEVERITY_ORDER = {
@@ -88,7 +89,10 @@ export default function GenerateReport() {
     projectUrl: '',
     assessmentDate: getToday(),
     analysts: ['Ankit Nandaniya', 'Arpan Goswami'],
-    projectManagers: 'Concern Project Manager: N/A'
+    projectManager: 'ABCD, WXYZ',
+    concernProjectManager: 'Shri ',
+    concernDirector: 'Shri Krunal Patel',
+    cisoName: 'Shri ABCD'
   });
 
   // Remarks
@@ -378,289 +382,28 @@ export default function GenerateReport() {
     }
   };
 
-  // Generate Excel matching Streamlit VAPT Suite with exact Director routing & formulas
+  // Generate Excel matching exact BISAG-N VAPT specifications
   const generateReport = async () => {
     if (!validate()) return;
 
     try {
+      setSaving(true);
       setMessage('Generating pixel-perfect formatted Excel report...');
 
-      const workbook = new ExcelJS.Workbook();
-      workbook.creator = 'BISAG-N Security Testing Team';
-      workbook.created = new Date();
-
-      const worksheet = workbook.addWorksheet('Sheet1', {
-        views: [{ showGridLines: true }]
+      await downloadVaptExcelReport({
+        project,
+        findings: selected,
+        remarks,
+        retestFindings: includePrevious
+          ? [
+              {
+                vulnerability_name: previousName || 'Flagged Vulnerability',
+                status: previousStatus || 'Open'
+              }
+            ]
+          : selected,
+        assessmentDate: project.assessmentDate
       });
-
-      const BORDER_STYLE = {
-        top: { style: 'thin', color: { argb: 'FF000000' } },
-        left: { style: 'thin', color: { argb: 'FF000000' } },
-        bottom: { style: 'thin', color: { argb: 'FF000000' } },
-        right: { style: 'thin', color: { argb: 'FF000000' } }
-      };
-
-      const GREEN_BG = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FFB6D7A8' } // Streamlit VAPT Suite Light Green
-      };
-
-      const BLUE_HEADER_BG = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FFD0E1FD' }
-      };
-
-      worksheet.columns = [
-        { width: 8 },   // A: S.No
-        { width: 34 },  // B: Vulnerability Name
-        { width: 44 },  // C: Description
-        { width: 44 },  // D: Step to reproduce
-        { width: 44 },  // E: Remediation
-        { width: 14 },  // F: Severity
-        { width: 30 },  // G: Reference
-        { width: 22 },  // H: OWASP Category - CWE
-        { width: 36 }   // I: CWE Reference
-      ];
-
-      // Row 5: Title
-      worksheet.mergeCells('B5:D5');
-      const titleCell = worksheet.getCell('B5');
-      titleCell.value = 'Manual Testing Report (VAPT)';
-      titleCell.font = { name: 'Times New Roman', size: 11, bold: true };
-      titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-      ['B5', 'C5', 'D5'].forEach(c => worksheet.getCell(c).border = BORDER_STYLE);
-
-      const todayStr = formatDate(project.assessmentDate) || new Date().toLocaleDateString('en-GB');
-
-      // Row 8: Project Name + Department + Date
-      worksheet.mergeCells('A8:I8');
-      const r8 = worksheet.getCell('A8');
-      r8.value = `Project Name: ${project.projectName}     Department: ${project.department}     Date: ${todayStr}`;
-      r8.fill = GREEN_BG;
-      r8.font = { name: 'Times New Roman', size: 11, bold: true };
-      r8.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-      for (let col = 1; col <= 9; col++) worksheet.getRow(8).getCell(col).border = BORDER_STYLE;
-
-      // Row 9: URL or APK
-      const cleanUrl = project.projectUrl.trim();
-      let label = 'URL';
-      if (cleanUrl.toLowerCase().endsWith('.apk')) label = 'APK';
-      worksheet.mergeCells('A9:I9');
-      const r9 = worksheet.getCell('A9');
-      r9.value = `${label}: ${project.projectUrl}`;
-      r9.fill = GREEN_BG;
-      r9.font = { name: 'Times New Roman', size: 12, bold: true };
-      r9.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-      for (let col = 1; col <= 9; col++) worksheet.getRow(9).getCell(col).border = BORDER_STYLE;
-
-      // Row 10: Security Analyst(s)
-      const analystText = project.analysts.length > 0 ? project.analysts.join(', ') : 'N/A';
-      worksheet.mergeCells('A10:I10');
-      const r10 = worksheet.getCell('A10');
-      r10.value = `Security Analyst: ${analystText}     Concern Project Manager: N/A`;
-      r10.fill = GREEN_BG;
-      r10.font = { name: 'Times New Roman', size: 10, bold: true };
-      r10.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-      for (let col = 1; col <= 9; col++) worksheet.getRow(10).getCell(col).border = BORDER_STYLE;
-
-      // Row 11: Department Director Routing
-      const directorText = DEPARTMENT_DIRECTORS[project.department] || 'Concern Director: Shri Krunal Patel';
-      worksheet.mergeCells('A11:I11');
-      const r11 = worksheet.getCell('A11');
-      r11.value = directorText;
-      r11.fill = GREEN_BG;
-      r11.font = { name: 'Times New Roman', size: 10, bold: true };
-      r11.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-      for (let col = 1; col <= 9; col++) worksheet.getRow(11).getCell(col).border = BORDER_STYLE;
-
-      // Row 14: Findings Headers
-      const headerRowIdx = 14;
-      const headers = [
-        'S.No',
-        'Vulnerability Name',
-        'Description',
-        'Step to reproduce',
-        'Remediation',
-        'Severity',
-        'Reference',
-        'OWASP Category – CWE number',
-        'CWE Reference'
-      ];
-
-      const hRow = worksheet.getRow(headerRowIdx);
-      headers.forEach((h, i) => {
-        const cell = hRow.getCell(i + 1);
-        cell.value = h;
-        cell.fill = BLUE_HEADER_BG;
-        cell.font = { name: 'Times New Roman', size: 10, bold: true };
-        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-        cell.border = BORDER_STYLE;
-      });
-      hRow.height = 28;
-
-      // Rows 15+: Findings
-      let currentRowIdx = 15;
-      const sortedFindings = [...selected].sort(
-        (a, b) => (SEVERITY_ORDER[a.reportSeverity] ?? 99) - (SEVERITY_ORDER[b.reportSeverity] ?? 99)
-      );
-
-      sortedFindings.forEach((f, idx) => {
-        const row = worksheet.getRow(currentRowIdx);
-        const stepsFormatted = (f.steps || '').replaceAll('$$', project.projectUrl.trim());
-
-        // Col 1: S.No
-        const c1 = row.getCell(1);
-        c1.value = idx + 1;
-        c1.alignment = { vertical: 'center', horizontal: 'center' };
-
-        // Col 2: Name
-        const c2 = row.getCell(2);
-        c2.value = f.name;
-        c2.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
-
-        // Col 3: Desc
-        const c3 = row.getCell(3);
-        c3.value = f.desc || '';
-        c3.alignment = { vertical: 'center', horizontal: 'left', wrapText: true };
-
-        // Col 4: Steps
-        const c4 = row.getCell(4);
-        c4.value = stepsFormatted;
-        c4.alignment = { vertical: 'center', horizontal: 'left', wrapText: true };
-
-        // Col 5: Remediation
-        const c5 = row.getCell(5);
-        c5.value = f.remediation || '';
-        c5.alignment = { vertical: 'center', horizontal: 'left', wrapText: true };
-
-        // Col 6: Severity
-        const c6 = row.getCell(6);
-        c6.value = f.reportSeverity || f.severity || 'Low';
-        c6.alignment = { vertical: 'center', horizontal: 'center' };
-
-        // Col 7: Reference (Clickable Hyperlink)
-        const c7 = row.getCell(7);
-        c7.value = f.reference || f.name;
-        if (f.reference_url) {
-          c7.value = { text: f.reference || f.name, hyperlink: f.reference_url };
-          c7.font = { name: 'Times New Roman', size: 10, color: { argb: 'FF0000FF' }, underline: true };
-        }
-        c7.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
-
-        // Col 8: OWASP
-        const c8 = row.getCell(8);
-        c8.value = f.owasp || 'A01:2025';
-        c8.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
-
-        // Col 9: CWE Ref (Clickable Hyperlink)
-        const c9 = row.getCell(9);
-        c9.value = f.cwe_ref || f.cwe_ref_url || 'https://cwe.mitre.org/';
-        if (f.cwe_ref_url) {
-          c9.value = { text: f.cwe_ref || f.name, hyperlink: f.cwe_ref_url };
-          c9.font = { name: 'Times New Roman', size: 10, color: { argb: 'FF0000FF' }, underline: true };
-        }
-        c9.alignment = { vertical: 'center', horizontal: 'center', wrapText: true };
-
-        for (let col = 1; col <= 9; col++) {
-          const c = row.getCell(col);
-          c.border = BORDER_STYLE;
-          if (!c.font || !c.font.color) {
-            c.font = { name: 'Times New Roman', size: 10 };
-          }
-        }
-
-        row.height = 75;
-        currentRowIdx++;
-      });
-
-      // Form No.
-      worksheet.mergeCells(`A${currentRowIdx}:I${currentRowIdx}`);
-      const fNo = worksheet.getCell(`A${currentRowIdx}`);
-      fNo.value = 'Form No.: BISAG/SD/FR-207 R01';
-      fNo.font = { name: 'Times New Roman', size: 11, italic: true };
-      fNo.alignment = { vertical: 'middle', horizontal: 'left' };
-      for (let col = 1; col <= 9; col++) worksheet.getRow(currentRowIdx).getCell(col).border = BORDER_STYLE;
-      currentRowIdx += 2;
-
-      // Remarks Header
-      worksheet.mergeCells(`A${currentRowIdx}:D${currentRowIdx}`);
-      const rh = worksheet.getCell(`A${currentRowIdx}`);
-      rh.value = 'Remarks:';
-      rh.fill = GREEN_BG;
-      rh.font = { name: 'Times New Roman', size: 14, bold: true };
-      rh.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-      for (let col = 1; col <= 4; col++) worksheet.getRow(currentRowIdx).getCell(col).border = BORDER_STYLE;
-      currentRowIdx++;
-
-      // Remarks Content
-      worksheet.mergeCells(`A${currentRowIdx}:D${currentRowIdx}`);
-      const rc = worksheet.getCell(`A${currentRowIdx}`);
-      const remarkText = remarks.length
-        ? remarks.map((r, i) => `${i + 1}. ${r}`).join('\n')
-        : '1.';
-      rc.value = remarkText;
-      rc.font = { name: 'Times New Roman', size: 11, bold: true };
-      rc.alignment = { vertical: 'top', horizontal: 'left', wrapText: true };
-      for (let col = 1; col <= 4; col++) worksheet.getRow(currentRowIdx).getCell(col).border = BORDER_STYLE;
-      worksheet.getRow(currentRowIdx).height = Math.max(40, remarks.length * 24);
-      currentRowIdx += 2;
-
-      // Optional Reference Section
-      if (includePrevious) {
-        worksheet.mergeCells(`A${currentRowIdx}:D${currentRowIdx}`);
-        const tc = worksheet.getCell(`A${currentRowIdx}`);
-        tc.value = `According to Last Reported Vulnerabilities on Date: ${formatDate(previousDate) || 'DD/MM/2026'}`;
-        tc.fill = GREEN_BG;
-        tc.font = { name: 'Times New Roman', size: 13, bold: true };
-        tc.alignment = { vertical: 'middle', horizontal: 'center' };
-        for (let col = 1; col <= 4; col++) worksheet.getRow(currentRowIdx).getCell(col).border = BORDER_STYLE;
-        currentRowIdx++;
-
-        // Subheaders
-        worksheet.getCell(`A${currentRowIdx}`).value = 'No';
-        worksheet.mergeCells(`B${currentRowIdx}:C${currentRowIdx}`);
-        worksheet.getCell(`B${currentRowIdx}`).value = 'Vulnerability Name';
-        worksheet.getCell(`D${currentRowIdx}`).value = 'Status';
-
-        ['A', 'B', 'C', 'D'].forEach(c => {
-          const cell = worksheet.getCell(`${c}${currentRowIdx}`);
-          cell.font = { name: 'Times New Roman', size: 12, bold: true };
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
-          cell.fill = GREEN_BG;
-          cell.border = BORDER_STYLE;
-        });
-        currentRowIdx++;
-
-        // Data Row
-        worksheet.getCell(`A${currentRowIdx}`).value = 1;
-        worksheet.mergeCells(`B${currentRowIdx}:C${currentRowIdx}`);
-        worksheet.getCell(`B${currentRowIdx}`).value = previousName || 'Flagged Vulnerability';
-        worksheet.getCell(`D${currentRowIdx}`).value = previousStatus || 'Open';
-
-        ['A', 'B', 'C', 'D'].forEach(c => {
-          const cell = worksheet.getCell(`${c}${currentRowIdx}`);
-          cell.font = { name: 'Times New Roman', size: 11 };
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
-          cell.border = BORDER_STYLE;
-        });
-      }
-
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const safeProjectName = project.projectName.trim().replace(/[^a-z0-9-_]+/gi, '_') || 'VAPT_Report';
-      link.download = `${safeProjectName}-${todayStr.replace(/\//g, '-')}.xlsx`;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
 
       // Auto-save to Database so report appears in Saved Reports & Dashboard
       const savedId = await saveToDatabase();
@@ -873,6 +616,60 @@ export default function GenerateReport() {
               <option value="Network Infrastructure VAPT">Network Infrastructure VAPT</option>
               <option value="Cloud Security Posture Audit">Cloud Security Posture Audit</option>
             </select>
+          </div>
+        </div>
+
+        {/* 4 Official Excel Metadata Fields (Rows 8-12 Structure) */}
+        <div style={{ marginTop: '16px', background: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '10px', padding: '16px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-green, #10b981)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <FileSpreadsheet size={15} />
+            <span>EXCEL REPORT HEADER METADATA (LEFT & RIGHT COLUMNS)</span>
+          </div>
+
+          <div className="form-grid-4">
+            <div className="form-group">
+              <label className="form-label">PROJECT MANAGER (LEFT COL - ROW 11)</label>
+              <input
+                type="text"
+                className="form-input"
+                value={project.projectManager}
+                onChange={(e) => setProject({ ...project, projectManager: e.target.value })}
+                placeholder="e.g. ABCD, WXYZ"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">CONCERN PROJECT MANAGER (RIGHT COL - ROW 10)</label>
+              <input
+                type="text"
+                className="form-input"
+                value={project.concernProjectManager}
+                onChange={(e) => setProject({ ...project, concernProjectManager: e.target.value })}
+                placeholder="e.g. Shri HarpalSinh"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">CONCERN ADDITIONAL DIRECTOR (RIGHT COL - ROW 11)</label>
+              <input
+                type="text"
+                className="form-input"
+                value={project.concernDirector}
+                onChange={(e) => setProject({ ...project, concernDirector: e.target.value })}
+                placeholder="e.g. Shri Krunal Patel"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">ADDITIONAL DIRECTOR CUM CISO (ROW 12)</label>
+              <input
+                type="text"
+                className="form-input"
+                value={project.cisoName}
+                onChange={(e) => setProject({ ...project, cisoName: e.target.value })}
+                placeholder="e.g. Shri ABCD"
+              />
+            </div>
           </div>
         </div>
 

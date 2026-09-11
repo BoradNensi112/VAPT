@@ -27,6 +27,7 @@ import {
   FileText
 } from 'lucide-react';
 import api from '../services/api';
+import { downloadVaptExcelReport } from '../services/excelExportService';
 import '../styles/projects.css';
 
 export default function Projects() {
@@ -94,6 +95,26 @@ export default function Projects() {
       fetchProjects();
     } catch (err) {
       alert(err.response?.data?.message || 'Error deleting project');
+    }
+  };
+
+  const handleExportProjectExcel = async (p) => {
+    try {
+      let findings = p.findings || [];
+      if (!findings.length) {
+        const res = await api.get(`/projects/${p.id}`);
+        if (res.data?.success && res.data.findings) {
+          findings = res.data.findings;
+        }
+      }
+      await downloadVaptExcelReport({
+        project: p,
+        findings,
+        assessmentDate: p.created_at
+      });
+    } catch (err) {
+      console.error('Project export error:', err);
+      alert('Failed to export project Excel workbook.');
     }
   };
 
@@ -410,13 +431,14 @@ export default function Projects() {
                       <ChevronRight size={14} />
                     </Link>
 
-                    <a
-                      href={`http://localhost:5000/api/reports/export/${p.id}`}
+                    <button
+                      type="button"
+                      onClick={() => handleExportProjectExcel(p)}
                       className="project-icon-action-btn excel"
                       title="Export Official Excel Workbook"
                     >
                       <FileSpreadsheet size={15} color="#10b981" />
-                    </a>
+                    </button>
 
                     <button
                       type="button"
