@@ -1,13 +1,13 @@
 import initialData from '../data/initialStore.json';
 
-const STORAGE_KEY = 'vapt_cloud_store_v2';
+const STORAGE_KEY = 'vapt_cloud_store_v4';
 
 function getStore() {
   const existing = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
   if (existing) {
     try {
       const parsed = JSON.parse(existing);
-      if (parsed && Array.isArray(parsed.projects) && parsed.projects.length >= 3) {
+      if (parsed && Array.isArray(parsed.projects) && parsed.projects.length >= 4) {
         return parsed;
       }
     } catch (e) {

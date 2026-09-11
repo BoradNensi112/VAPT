@@ -140,6 +140,18 @@
       "created_by": 1,
       "created_at": "2026-09-05T09:30:00.000Z",
       "updated_at": "2026-09-05T09:30:00.000Z"
+    },
+    {
+      "id": 4,
+      "project_name": "CyberShield Android APK VAPT Assessment",
+      "target_url": "https://portal.bisag.gov.in/downloads/cybershield-v2.apk",
+      "security_analysts": "Nensi Borad, HarpalSinh Rathod, Ankit Nandaniya",
+      "project_managers": "Concern Project Manager: Shri V.K. Sharma",
+      "ciso_name": "Concern Additional Director: Shri Krunal Patel",
+      "remarks": "Mobile Application Penetration Testing & Reverse Engineering Assessment under OWASP Mobile Top 10 Security Directives.",
+      "created_by": 1,
+      "created_at": "2026-09-06T10:00:00.000Z",
+      "updated_at": "2026-09-06T10:00:00.000Z"
     }
   ],
   "knowledge_base": [
@@ -421,6 +433,54 @@
       "status": "Closed",
       "created_at": "2026-09-05T09:45:00.000Z",
       "updated_at": "2026-09-05T11:00:00.000Z"
+    },
+    {
+      "id": 11,
+      "project_id": 4,
+      "vulnerability_name": "Insecure Data Storage in Shared Preferences",
+      "description": "Sensitive auth tokens and session keys stored unencrypted in local Android SharedPreferences.",
+      "steps_to_reproduce": "1. Decompile APK with JADX.\n2. Inspect shared_prefs/auth_session.xml.\n3. Extract plain-text tokens.",
+      "remediation": "1. Use Android EncryptedSharedPreferences (Jetpack Security).\n2. Store cryptographic keys in Android Keystore System.",
+      "severity": "High",
+      "reference": "CWE-922",
+      "owasp_category": "M02:2024-Insecure Data Storage",
+      "cwe_number": "CWE-922",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/922.html",
+      "status": "Open",
+      "created_at": "2026-09-06T10:05:00.000Z",
+      "updated_at": "2026-09-06T10:05:00.000Z"
+    },
+    {
+      "id": 12,
+      "project_id": 4,
+      "vulnerability_name": "Improper Certificate Validation (SSL Pinning Bypass)",
+      "description": "The mobile app accepts self-signed SSL certificates without certificate pinning verification.",
+      "steps_to_reproduce": "1. Configure Burp Suite CA certificate.\n2. Intercept mobile app HTTPS traffic.\n3. Verify all REST API payloads decrypted.",
+      "remediation": "1. Implement Network Security Configuration with strict SSL Public Key Pinning.\n2. Detect and terminate on Frida/Xposed hooks.",
+      "severity": "Critical",
+      "reference": "CWE-295",
+      "owasp_category": "M03:2024-Insecure Communication",
+      "cwe_number": "CWE-295",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/295.html",
+      "status": "Open",
+      "created_at": "2026-09-06T10:10:00.000Z",
+      "updated_at": "2026-09-06T10:10:00.000Z"
+    },
+    {
+      "id": 13,
+      "project_id": 4,
+      "vulnerability_name": "Missing Root Detection & Runtime Integrity Protection",
+      "description": "Application does not verify if Android device is rooted or running in an emulated environment.",
+      "steps_to_reproduce": "1. Launch app on rooted device.\n2. Attach Frida agent to inspect runtime memory.\n3. Bypass client-side security checks.",
+      "remediation": "1. Implement Google Play Integrity API.\n2. Add multi-layered Rootbeer & Magisk detection checks.",
+      "severity": "Medium",
+      "reference": "CWE-353",
+      "owasp_category": "M08:2024-Code Tampering",
+      "cwe_number": "CWE-353",
+      "cwe_url": "https://cwe.mitre.org/data/definitions/353.html",
+      "status": "Closed",
+      "created_at": "2026-09-06T10:15:00.000Z",
+      "updated_at": "2026-09-06T11:30:00.000Z"
     }
   ],
   "activity_logs": [
