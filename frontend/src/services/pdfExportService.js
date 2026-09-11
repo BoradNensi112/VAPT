@@ -1,17 +1,24 @@
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-
 /**
- * Executive VAPT PDF Report Generator
- * Generates an industry-standard, multi-page VAPT Audit Report
+ * ============================================================================
+ * EXECUTIVE VAPT PDF REPORT GENERATOR SERVICE
+ * ============================================================================
+ * Optimized for performance: Uses dynamic on-demand imports for jsPDF and 
+ * jspdf-autotable so heavy PDF libraries are only downloaded when user exports PDF.
  */
-export const generateVaptPdfReport = ({
+
+export const generateVaptPdfReport = async ({
   project = {},
   findings = [],
   scopeType = 'Web Application VAPT',
   executiveSummary = '',
   analysts = []
 }) => {
+  // Dynamically load PDF engines on demand
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable')
+  ]);
+
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',

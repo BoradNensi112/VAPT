@@ -520,7 +520,25 @@ export const localStore = {
 
   getAnalysts() {
     const store = getStore();
-    return { success: true, analysts: store.analysts || [] };
+    const current = store.analysts || [];
+    const initialList = initialData.analysts || [];
+    
+    // Merge any missing initial analysts into current list
+    let updated = false;
+    initialList.forEach(ia => {
+      const exists = current.some(c => (c.name || '').trim().toLowerCase() === (ia.name || '').trim().toLowerCase());
+      if (!exists) {
+        current.push(ia);
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      store.analysts = current;
+      saveStore(store);
+    }
+
+    return { success: true, analysts: current };
   },
 
   createAnalyst(analystData) {

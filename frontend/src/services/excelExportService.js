@@ -1,4 +1,10 @@
-import ExcelJS from 'exceljs';
+/**
+ * ============================================================================
+ * VAPT EXCEL REPORT GENERATOR SERVICE (BISAG/SD/FR-207 R01 FORMAT)
+ * ============================================================================
+ * Optimized for performance: Uses dynamic on-demand imports for ExcelJS to
+ * prevent bundling heavy ~900KB spreadsheet libraries into the main bundle.
+ */
 
 const BORDER_STYLE = {
   top: { style: 'thin', color: { argb: 'FF000000' } },
@@ -47,6 +53,9 @@ export async function generateVaptExcelReport({
   retestFindings = [],
   assessmentDate = null
 }) {
+  // Dynamic import: Load ExcelJS only when user initiates report generation
+  const { default: ExcelJS } = await import('exceljs');
+
   const workbook = new ExcelJS.Workbook();
   workbook.creator = 'BISAG-N (MeitY) VAPT Security Team';
   workbook.lastModifiedBy = 'CyberShield VAPT System';

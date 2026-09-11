@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ExcelJS from 'exceljs';
 import {
   FileSpreadsheet,
   FileText,
@@ -91,7 +90,7 @@ export default function GenerateReport() {
     department: 'Software',
     projectUrl: '',
     assessmentDate: getToday(),
-    analysts: ['Ankit Nandaniya', 'Arpan Goswami'],
+    analysts: ['Ankit Nandaniya'],
     concernProjectManager: 'Shri ',
     concernDirector: 'Shri Krunal Patel'
   });
@@ -661,19 +660,8 @@ export default function GenerateReport() {
 
         {/* Assigned Security Analysts (Dynamic Multi-Select + Admin Add Custom) */}
         <div style={{ marginTop: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div style={{ marginBottom: '8px' }}>
             <label className="form-label" style={{ margin: 0 }}>ASSIGNED SECURITY ANALYSTS (MULTI-SELECT)</label>
-            {isAdmin && !isAddingAnalyst && (
-              <button
-                type="button"
-                onClick={() => setIsAddingAnalyst(true)}
-                className="cyber-btn cyber-btn-secondary"
-                style={{ fontSize: '11px', padding: '4px 10px', display: 'flex', alignItems: 'center', gap: '4px' }}
-              >
-                <Plus size={13} />
-                <span>Add Analyst</span>
-              </button>
-            )}
           </div>
 
           <div className="analyst-chips-container">

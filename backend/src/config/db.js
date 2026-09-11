@@ -75,16 +75,13 @@ async function checkPgConnection() {
 }
 
 async function query(text, params = []) {
-  if (isPgActive) {
-    try {
-      return await pool.query(text, params);
-    } catch (err) {
-      console.warn('[PostgreSQL Query Error, falling back to local adapter]:', err.message);
-    }
+  try {
+    const res = await pool.query(text, params);
+    isPgActive = true;
+    return res;
+  } catch (err) {
+    return emulateQuery(text, params);
   }
-
-  // Local fallback emulator for PostgreSQL queries
-  return emulateQuery(text, params);
 }
 
 function emulateQuery(text, params) {

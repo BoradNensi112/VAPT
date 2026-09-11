@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -9,18 +9,55 @@ import Navbar from './components/Navbar';
 import CyberBackground from './components/CyberBackground';
 import CyberTelemetryBar from './components/CyberTelemetryBar';
 
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Users from './pages/Users';
-import Projects from './pages/Projects';
-import GenerateReport from './pages/GenerateReport';
-import Checklist from './pages/Checklist';
-import AnalyzeReport from './pages/AnalyzeReport';
-import CompareReports from './pages/CompareReports';
-import KnowledgeBase from './pages/KnowledgeBase';
-import SecurityTools from './pages/SecurityTools';
-import ActivityLogs from './pages/ActivityLogs';
-import Profile from './pages/Profile';
+/**
+ * ============================================================================
+ * LAZY-LOADED ROUTE MODULES (CODE-SPLITTING FOR OPTIMAL PERFORMANCE)
+ * ============================================================================
+ * Loads page chunks on-demand to keep the initial application bundle lightweight,
+ * fast, and responsive across desktop and mobile devices.
+ */
+const Login = lazy(() => import('./pages/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Users = lazy(() => import('./pages/Users'));
+const Projects = lazy(() => import('./pages/Projects'));
+const GenerateReport = lazy(() => import('./pages/GenerateReport'));
+const Checklist = lazy(() => import('./pages/Checklist'));
+const AnalyzeReport = lazy(() => import('./pages/AnalyzeReport'));
+const CompareReports = lazy(() => import('./pages/CompareReports'));
+const KnowledgeBase = lazy(() => import('./pages/KnowledgeBase'));
+const SecurityTools = lazy(() => import('./pages/SecurityTools'));
+const ActivityLogs = lazy(() => import('./pages/ActivityLogs'));
+const Profile = lazy(() => import('./pages/Profile'));
+
+/**
+ * Smooth CyberShield Page Transition Fallback
+ */
+function ModuleLoadingFallback() {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '55vh',
+      gap: '14px',
+      color: 'var(--accent-cyan)',
+      fontFamily: 'var(--font-cyber)'
+    }}>
+      <div style={{
+        width: '36px',
+        height: '36px',
+        border: '3px solid rgba(0, 240, 255, 0.15)',
+        borderTopColor: 'var(--accent-cyan)',
+        borderRadius: '50%',
+        animation: 'spin 0.8s linear infinite'
+      }} />
+      <span style={{ fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.8 }}>
+        Loading Security Module...
+      </span>
+    </div>
+  );
+}
 
 function AdminRoute({ children }) {
   const { user, isAdmin } = useAuth();
@@ -95,21 +132,23 @@ function ProtectedLayout() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <div className="main-content">
         <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/users" element={<AdminRoute><Users /></AdminRoute>} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/generate-report" element={<GenerateReport />} />
-          <Route path="/checklist" element={<Checklist />} />
-          <Route path="/analyze-report" element={<AnalyzeReport />} />
-          <Route path="/compare-reports" element={<CompareReports />} />
-          <Route path="/knowledge-base" element={<KnowledgeBase />} />
-          <Route path="/security-tools" element={<SecurityTools />} />
-          <Route path="/activity-logs" element={<ActivityLogs />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+        <Suspense fallback={<ModuleLoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/users" element={<AdminRoute><Users /></AdminRoute>} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/generate-report" element={<GenerateReport />} />
+            <Route path="/checklist" element={<Checklist />} />
+            <Route path="/analyze-report" element={<AnalyzeReport />} />
+            <Route path="/compare-reports" element={<CompareReports />} />
+            <Route path="/knowledge-base" element={<KnowledgeBase />} />
+            <Route path="/security-tools" element={<SecurityTools />} />
+            <Route path="/activity-logs" element={<ActivityLogs />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </Suspense>
       </div>
     </div>
   );
@@ -119,10 +158,12 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/*" element={<ProtectedLayout />} />
-        </Routes>
+        <Suspense fallback={<ModuleLoadingFallback />}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/*" element={<ProtectedLayout />} />
+          </Routes>
+        </Suspense>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -128,6 +128,22 @@ async function initializeDatabase() {
       );
     `);
 
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS checklist_sessions (
+        id SERIAL PRIMARY KEY,
+        user_id INT REFERENCES users(id) ON DELETE SET NULL,
+        username VARCHAR(50) NOT NULL,
+        session_date VARCHAR(20) NOT NULL,
+        target_url VARCHAR(500),
+        project_name VARCHAR(200),
+        checked_items TEXT,
+        notes TEXT,
+        tested_count INT DEFAULT 0,
+        total_count INT DEFAULT 0,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
     // 2. Seed Admin
     const adminCheck = await db.query("SELECT * FROM users WHERE username = 'admin'");
     if (adminCheck.rows.length === 0) {

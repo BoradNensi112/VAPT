@@ -1,12 +1,19 @@
 import axios from 'axios';
 import { localStore } from './localStore';
 
+/**
+ * ============================================================================
+ * UNIFIED RESILIENT API CLIENT & SERVICE GATEWAY
+ * ============================================================================
+ * Fast failover with 2.5s timeout to ensure zero UI freeze across devices.
+ */
+
 // In Netlify, /api directly proxies to /.netlify/functions/api without any external server
 const API_BASE_URL = '/api';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 8000,
+  timeout: 2500, // Fast non-blocking timeout for instant response
   headers: {
     'Content-Type': 'application/json'
   }
