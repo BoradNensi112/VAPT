@@ -244,6 +244,12 @@
   gap: 16px;
 }
 
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
 /* Analyst Check Chips */
 .analyst-chips-container {
   display: flex;

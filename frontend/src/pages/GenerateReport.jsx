@@ -582,7 +582,7 @@ export default function GenerateReport() {
           </div>
         </div>
 
-        <div className="form-grid-4">
+        <div className="form-grid-3">
           <div className="form-group">
             <label className="form-label">PROJECT NAME *</label>
             <input
@@ -631,37 +631,27 @@ export default function GenerateReport() {
               onChange={(e) => setProject({ ...project, assessmentDate: e.target.value })}
             />
           </div>
-        </div>
 
-        {/* Clean Official Excel Metadata Fields */}
-        <div style={{ marginTop: '16px', background: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '10px', padding: '16px' }}>
-          <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-green, #10b981)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <FileSpreadsheet size={15} />
-            <span>EXCEL REPORT METADATA</span>
+          <div className="form-group">
+            <label className="form-label">CONCERN PROJECT MANAGER</label>
+            <input
+              type="text"
+              className="form-input"
+              value={project.concernProjectManager}
+              onChange={(e) => setProject({ ...project, concernProjectManager: e.target.value })}
+              placeholder="e.g. Shri HarpalSinh"
+            />
           </div>
 
-          <div className="form-grid-2">
-            <div className="form-group">
-              <label className="form-label">CONCERN PROJECT MANAGER</label>
-              <input
-                type="text"
-                className="form-input"
-                value={project.concernProjectManager}
-                onChange={(e) => setProject({ ...project, concernProjectManager: e.target.value })}
-                placeholder="e.g. Shri HarpalSinh"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">CONCERN ADDITIONAL DIRECTOR</label>
-              <input
-                type="text"
-                className="form-input"
-                value={project.concernDirector}
-                onChange={(e) => setProject({ ...project, concernDirector: e.target.value })}
-                placeholder="e.g. Shri Krunal Patel"
-              />
-            </div>
+          <div className="form-group">
+            <label className="form-label">CONCERN ADDITIONAL DIRECTOR</label>
+            <input
+              type="text"
+              className="form-input"
+              value={project.concernDirector}
+              onChange={(e) => setProject({ ...project, concernDirector: e.target.value })}
+              placeholder="e.g. Shri Krunal Patel"
+            />
           </div>
         </div>
 
