@@ -275,35 +275,66 @@ export default function Dashboard() {
     ];
   }, [totalFindings, criticalCount, highCount, mediumCount, lowCount]);
 
-  // Dynamic OWASP Top 10 telemetry from DB
+  // Dynamic OWASP Top 10 telemetry from DB - Normalized to Top 4 Main Categories
   const owaspData = useMemo(() => {
     const list = analyticsData?.owaspBreakdown || [];
-    const colors = ['#ef4444', '#f97316', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
-    if (!Array.isArray(list) || list.length === 0) {
-      return [
-        { code: 'A03:2021', name: 'Injection (XSS/SQLi)', count: 0, pct: 0, color: '#ef4444' },
-        { code: 'A05:2021', name: 'Security Misconfiguration', count: 0, pct: 0, color: '#3b82f6' },
-        { code: 'A01:2021', name: 'Broken Access Control', count: 0, pct: 0, color: '#f97316' }
-      ];
-    }
-    return list.map((item, idx) => {
-      const catStr = String(item.owasp_category || '');
-      const code = catStr.split('–')[0].split('-')[0].trim() || `A0${idx + 1}:2021`;
+    
+    const standardCategories = {
+      'A05': { code: 'A05:2021', name: 'Security Misconfiguration', color: '#3b82f6' },
+      'A03': { code: 'A03:2021', name: 'Injection (XSS / SQLi)', color: '#ef4444' },
+      'A07': { code: 'A07:2021', name: 'Identification & Auth Failures', color: '#10b981' },
+      'A01': { code: 'A01:2021', name: 'Broken Access Control', color: '#f97316' },
+      'A02': { code: 'A02:2021', name: 'Cryptographic Failures', color: '#ef4444' },
+      'A04': { code: 'A04:2021', name: 'Insecure Design', color: '#f59e0b' },
+      'M02': { code: 'M02:2024', name: 'Insecure Data Storage', color: '#ef4444' },
+      'M03': { code: 'M03:2024', name: 'Insecure Communication', color: '#f97316' },
+      'M08': { code: 'M08:2024', name: 'Code Tampering', color: '#8b5cf6' }
+    };
+
+    const counts = {};
+    (list || []).forEach((item) => {
+      const catStr = String(item.owasp_category || item.name || '');
+      let key = 'A05';
+      if (catStr.includes('A01')) key = 'A01';
+      else if (catStr.includes('A02')) key = 'A02';
+      else if (catStr.includes('A03')) key = 'A03';
+      else if (catStr.includes('A04')) key = 'A04';
+      else if (catStr.includes('A05')) key = 'A05';
+      else if (catStr.includes('A07')) key = 'A07';
+      else if (catStr.includes('M02')) key = 'M02';
+      else if (catStr.includes('M03')) key = 'M03';
+      else if (catStr.includes('M08')) key = 'M08';
+
       const count = parseInt(item.count || 0, 10) || 0;
+      counts[key] = (counts[key] || 0) + count;
+    });
+
+    // Default primary 4 keys if no data or fewer than 4
+    const defaultOrder = ['A05', 'A03', 'A07', 'A01'];
+    
+    // Sort all active keys by flaw count descending
+    const activeKeys = Object.keys(counts).filter((k) => counts[k] > 0).sort((a, b) => counts[b] - counts[a]);
+    
+    // Take top 4, filling from defaultOrder if needed
+    const top4Keys = [...new Set([...activeKeys, ...defaultOrder])].slice(0, 4);
+
+    return top4Keys.map((key) => {
+      const meta = standardCategories[key] || { code: `${key}:2021`, name: 'Security Misconfiguration', color: '#3b82f6' };
+      const count = counts[key] || 0;
       return {
-        code,
-        name: catStr || 'Vulnerability Flaw',
+        code: meta.code,
+        name: meta.name,
         count,
-        pct: totalFindings > 0 ? (count / totalFindings) * 100 : 0,
-        color: colors[idx % colors.length]
+        pct: totalFindings > 0 ? ((count / totalFindings) * 100).toFixed(1) : '0.0',
+        color: meta.color
       };
     });
   }, [analyticsData, totalFindings]);
 
-  // Dynamic CWE Categories from DB with enriched weakness details
+  // Dynamic CWE Categories from DB with enriched weakness details (Top 4)
   const cweData = useMemo(() => {
     const list = analyticsData?.cweBreakdown || [];
-    const colors = ['#ef4444', '#f97316', '#3b82f6', '#f59e0b', '#10b981', '#8b5cf6', '#06b6d4', '#ec4899'];
+    const colors = ['#ef4444', '#f97316', '#3b82f6', '#f59e0b'];
     const descriptions = {
       'CWE-319': { name: 'Cleartext Transmission of Sensitive Information', mitigation: 'Enforce HTTPS, TLS 1.3 & HSTS header', severity: 'High' },
       'CWE-942': { name: 'Permissive CORS Policy', mitigation: 'Restrict Access-Control-Allow-Origin to trusted domains', severity: 'Medium' },
@@ -327,7 +358,10 @@ export default function Dashboard() {
         { code: 'CWE-89', name: 'SQL Injection (SQLi)', count: 0, pct: '0.0', color: '#f59e0b', mitigation: 'Parameterized Queries', severity: 'Critical' }
       ];
     }
-    return list.map((item, idx) => {
+
+    const sortedList = [...list].sort((a, b) => (parseInt(b.count, 10) || 0) - (parseInt(a.count, 10) || 0)).slice(0, 4);
+
+    return sortedList.map((item, idx) => {
       const code = item.cwe_number || `CWE-${idx + 1}`;
       const count = parseInt(item.count || 0, 10) || 0;
       const meta = descriptions[code] || { name: item.name || code, mitigation: 'Review source code logic & apply sanitization', severity: 'Medium' };
@@ -898,7 +932,7 @@ export default function Dashboard() {
             </div>
             <div className="owasp-count-header-badge">
               <span className="owasp-pulse-dot" />
-              <span>{owaspData.length} OWASP Vectors</span>
+              <span>Top 4 OWASP Categories</span>
             </div>
           </div>
 
@@ -955,7 +989,7 @@ export default function Dashboard() {
           </div>
           <div className="cwe-header-meta-badge">
             <span className="cwe-pulse-dot" />
-            <span>{cweData.length} CWE Types Active</span>
+            <span>Top 4 CWE Weaknesses</span>
           </div>
         </div>
 
