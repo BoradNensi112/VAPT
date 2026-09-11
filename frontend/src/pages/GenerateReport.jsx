@@ -33,6 +33,7 @@ import {
   OWASP_OPTIONS,
   VULNERABILITIES as DEFAULT_VULNERABILITIES
 } from '../data/vulnerabilityData';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { generateVaptPdfReport } from '../services/pdfExportService';
 import { downloadVaptExcelReport } from '../services/excelExportService';
@@ -54,11 +55,13 @@ const formatDate = (val) => {
 };
 
 export default function GenerateReport() {
+  const { user, isAdmin } = useAuth();
   const [searchParams] = useSearchParams();
   const projectId = searchParams.get('projectId');
 
   const [vulnerabilities, setVulnerabilities] = useState(DEFAULT_VULNERABILITIES);
   const [analystsList, setAnalystsList] = useState(DEFAULT_ANALYSTS);
+  const [allProjects, setAllProjects] = useState([]);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState([]);
   const [expanded, setExpanded] = useState(null);
@@ -89,24 +92,57 @@ export default function GenerateReport() {
     projectUrl: '',
     assessmentDate: getToday(),
     analysts: ['Ankit Nandaniya', 'Arpan Goswami'],
-    projectManager: 'ABCD, WXYZ',
     concernProjectManager: 'Shri ',
-    concernDirector: 'Shri Krunal Patel',
-    cisoName: 'Shri ABCD'
+    concernDirector: 'Shri Krunal Patel'
   });
 
   // Remarks
   const [remarks, setRemarks] = useState([REMARK_OPTIONS[0]]);
-  const [scopeType, setScopeType] = useState('Web Application VAPT');
 
   // Previous Reference
   const [includePrevious, setIncludePrevious] = useState(false);
-  const [previousDate, setPreviousDate] = useState('2026-08-04');
-  const [previousName, setPreviousName] = useState('');
-  const [previousStatus, setPreviousStatus] = useState('Open');
 
-  // Load dynamic data from backend (KB and Analysts) + Existing Project if projectId query param
+  // Auto-calculated Previous Findings belonging ONLY to the same project name
+  const previousProjectFindings = useMemo(() => {
+    if (!project.projectName) return [];
+    const cleanName = project.projectName.trim().toLowerCase();
+    const matchedProjects = (allProjects || []).filter(
+      (p) => p.project_name && p.project_name.trim().toLowerCase() === cleanName && String(p.id) !== String(projectId)
+    );
+
+    const list = [];
+    const seenNames = new Set();
+    matchedProjects.forEach((p) => {
+      (p.findings || []).forEach((f) => {
+        const vName = f.vulnerability_name || f.name;
+        if (vName && !seenNames.has(vName)) {
+          seenNames.add(vName);
+          list.push({
+            id: f.id || Math.random(),
+            vulnerability_name: vName,
+            severity: f.reportSeverity || f.severity || 'Medium',
+            status: f.status || 'Open',
+            owasp_category: f.owasp_category || f.owasp || 'A03:2021-Injection',
+            cwe_number: f.cwe_number || f.cwe_ref || 'CWE-79',
+            sourceProject: p.project_name,
+            cycle_date: f.created_at || p.created_at
+          });
+        }
+      });
+    });
+    return list;
+  }, [allProjects, project.projectName, projectId]);
+
+  // Load dynamic data from backend (KB, Analysts, Projects) + Existing Project if projectId query param
   useEffect(() => {
+    // 0. Fetch all projects to link previous cycle findings
+    api.get('/projects')
+      .then(res => {
+        if (res.data.success && Array.isArray(res.data.projects)) {
+          setAllProjects(res.data.projects);
+        }
+      })
+      .catch(() => {});
     // 1. Fetch Dynamic Analysts
     api.get('/analysts')
       .then(res => {
@@ -394,14 +430,7 @@ export default function GenerateReport() {
         project,
         findings: selected,
         remarks,
-        retestFindings: includePrevious
-          ? [
-              {
-                vulnerability_name: previousName || 'Flagged Vulnerability',
-                status: previousStatus || 'Open'
-              }
-            ]
-          : selected,
+        retestFindings: includePrevious ? previousProjectFindings : [],
         assessmentDate: project.assessmentDate
       });
 
@@ -427,8 +456,8 @@ export default function GenerateReport() {
         project_name: project.projectName.trim(),
         target_url: project.projectUrl.trim(),
         security_analysts: project.analysts.join(', '),
-        project_managers: project.projectManagers || 'Concern Project Manager: N/A',
-        ciso_name: DEPARTMENT_DIRECTORS[project.department] || 'Shri Krunal Patel',
+        project_managers: project.concernProjectManager ? `Concern Project Manager: ${project.concernProjectManager}` : 'Concern Project Manager: N/A',
+        ciso_name: project.concernDirector ? `Concern Additional Director: ${project.concernDirector}` : (DEPARTMENT_DIRECTORS[project.department] || 'Shri Krunal Patel'),
         remarks: remarks.join('\n')
       };
 
@@ -549,7 +578,7 @@ export default function GenerateReport() {
           <span className="step-number-badge">01</span>
           <div>
             <h2>Report & Project Parameters</h2>
-            <p>Target scope, department director routing, and assigned security personnel.</p>
+            <p>Target scope, department routing, and assigned security personnel.</p>
           </div>
         </div>
 
@@ -602,44 +631,18 @@ export default function GenerateReport() {
               onChange={(e) => setProject({ ...project, assessmentDate: e.target.value })}
             />
           </div>
-
-          <div className="form-group">
-            <label className="form-label">SCOPE / AUDIT TYPE</label>
-            <select
-              className="form-select"
-              value={scopeType}
-              onChange={(e) => setScopeType(e.target.value)}
-            >
-              <option value="Web Application VAPT">Web Application VAPT</option>
-              <option value="REST API & Microservices VAPT">REST API & Microservices VAPT</option>
-              <option value="Mobile Application (Android/iOS) VAPT">Mobile Application VAPT</option>
-              <option value="Network Infrastructure VAPT">Network Infrastructure VAPT</option>
-              <option value="Cloud Security Posture Audit">Cloud Security Posture Audit</option>
-            </select>
-          </div>
         </div>
 
-        {/* 4 Official Excel Metadata Fields (Rows 8-12 Structure) */}
+        {/* Clean Official Excel Metadata Fields */}
         <div style={{ marginTop: '16px', background: 'rgba(16, 185, 129, 0.04)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '10px', padding: '16px' }}>
           <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-green, #10b981)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <FileSpreadsheet size={15} />
-            <span>EXCEL REPORT HEADER METADATA (LEFT & RIGHT COLUMNS)</span>
+            <span>EXCEL REPORT METADATA</span>
           </div>
 
-          <div className="form-grid-4">
+          <div className="form-grid-2">
             <div className="form-group">
-              <label className="form-label">PROJECT MANAGER (LEFT COL - ROW 11)</label>
-              <input
-                type="text"
-                className="form-input"
-                value={project.projectManager}
-                onChange={(e) => setProject({ ...project, projectManager: e.target.value })}
-                placeholder="e.g. ABCD, WXYZ"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">CONCERN PROJECT MANAGER (RIGHT COL - ROW 10)</label>
+              <label className="form-label">CONCERN PROJECT MANAGER</label>
               <input
                 type="text"
                 className="form-input"
@@ -650,7 +653,7 @@ export default function GenerateReport() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">CONCERN ADDITIONAL DIRECTOR (RIGHT COL - ROW 11)</label>
+              <label className="form-label">CONCERN ADDITIONAL DIRECTOR</label>
               <input
                 type="text"
                 className="form-input"
@@ -659,25 +662,14 @@ export default function GenerateReport() {
                 placeholder="e.g. Shri Krunal Patel"
               />
             </div>
-
-            <div className="form-group">
-              <label className="form-label">ADDITIONAL DIRECTOR CUM CISO (ROW 12)</label>
-              <input
-                type="text"
-                className="form-input"
-                value={project.cisoName}
-                onChange={(e) => setProject({ ...project, cisoName: e.target.value })}
-                placeholder="e.g. Shri ABCD"
-              />
-            </div>
           </div>
         </div>
 
-        {/* Assigned Security Analysts (Dynamic Multi-Select + Add Custom) */}
+        {/* Assigned Security Analysts (Dynamic Multi-Select + Admin Add Custom) */}
         <div style={{ marginTop: '16px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <label className="form-label" style={{ margin: 0 }}>ASSIGNED SECURITY ANALYSTS (MULTI-SELECT)</label>
-            {!isAddingAnalyst && (
+            {isAdmin && !isAddingAnalyst && (
               <button
                 type="button"
                 onClick={() => setIsAddingAnalyst(true)}
@@ -713,40 +705,42 @@ export default function GenerateReport() {
               );
             })}
 
-            {/* Inline Add Analyst Form */}
-            {isAddingAnalyst ? (
-              <form onSubmit={handleAddCustomAnalyst} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Enter analyst name..."
-                  value={newAnalystName}
-                  onChange={(e) => setNewAnalystName(e.target.value)}
-                  autoFocus
-                  style={{ width: '180px', padding: '6px 12px', fontSize: '12px' }}
-                />
-                <button type="submit" className="cyber-btn cyber-btn-primary" style={{ padding: '6px 12px', fontSize: '12px' }}>
-                  Save
-                </button>
+            {/* Inline Add Analyst Form (Admin Only) */}
+            {isAdmin && (
+              isAddingAnalyst ? (
+                <form onSubmit={handleAddCustomAnalyst} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Enter analyst name..."
+                    value={newAnalystName}
+                    onChange={(e) => setNewAnalystName(e.target.value)}
+                    autoFocus
+                    style={{ width: '180px', padding: '6px 12px', fontSize: '12px' }}
+                  />
+                  <button type="submit" className="cyber-btn cyber-btn-primary" style={{ padding: '6px 12px', fontSize: '12px' }}>
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setIsAddingAnalyst(false); setNewAnalystName(''); }}
+                    className="cyber-btn cyber-btn-secondary"
+                    style={{ padding: '6px 10px', fontSize: '12px' }}
+                  >
+                    ✕
+                  </button>
+                </form>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => { setIsAddingAnalyst(false); setNewAnalystName(''); }}
-                  className="cyber-btn cyber-btn-secondary"
-                  style={{ padding: '6px 10px', fontSize: '12px' }}
+                  onClick={() => setIsAddingAnalyst(true)}
+                  className="analyst-chip"
+                  style={{ borderStyle: 'dashed', borderColor: 'var(--accent-cyan)', color: 'var(--accent-cyan)', background: 'transparent' }}
                 >
-                  ✕
+                  <Plus size={14} />
+                  <span>Add Custom Analyst</span>
                 </button>
-              </form>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsAddingAnalyst(true)}
-                className="analyst-chip"
-                style={{ borderStyle: 'dashed', borderColor: 'var(--accent-cyan)', color: 'var(--accent-cyan)', background: 'transparent' }}
-              >
-                <Plus size={14} />
-                <span>Add Custom Analyst</span>
-              </button>
+              )
             )}
           </div>
         </div>
@@ -757,27 +751,29 @@ export default function GenerateReport() {
         </div>
       </div>
 
-      {/* STEP 2: Search & Select Vulnerabilities + Dynamic Add Modal */}
+      {/* STEP 2: Search & Select Vulnerabilities + Admin Dynamic Add Modal */}
       <div className="report-step-panel">
         <div className="step-panel-header-split">
           <div className="step-panel-title">
             <span className="step-number-badge">02</span>
             <div>
               <h2>Search & Select Vulnerabilities</h2>
-              <p>Search standard OWASP / CWE templates or define a custom zero-day vulnerability.</p>
+              <p>Search standard OWASP / CWE templates or select from security registry.</p>
             </div>
           </div>
 
           <div className="picker-quick-actions">
-            <button
-              type="button"
-              onClick={() => setShowAddVulnModal(true)}
-              className="cyber-btn cyber-btn-primary"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
-            >
-              <Plus size={15} />
-              <span>Add Custom Vulnerability</span>
-            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => setShowAddVulnModal(true)}
+                className="cyber-btn cyber-btn-primary"
+                style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <Plus size={15} />
+                <span>Add Custom Vulnerability</span>
+              </button>
+            )}
             <button type="button" onClick={selectVisible} className="cyber-btn cyber-btn-secondary">
               Select Visible
             </button>
@@ -1006,41 +1002,71 @@ export default function GenerateReport() {
           </label>
 
           {includePrevious && (
-            <div className="form-grid-3" style={{ marginTop: '16px' }}>
-              <div className="form-group">
-                <label className="form-label">LAST REPORTED DATE</label>
-                <input
-                  type="date"
-                  className="form-input"
-                  value={previousDate}
-                  onChange={(e) => setPreviousDate(e.target.value)}
-                />
-              </div>
+            <div style={{ marginTop: '16px' }}>
+              {previousProjectFindings.length > 0 ? (
+                <div style={{ background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: '8px', padding: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '1.2rem' }}>🔄</span>
+                      <strong style={{ color: 'var(--accent-cyan, #00e5ff)', fontSize: '0.92rem' }}>
+                        Auto-linked {previousProjectFindings.length} Vulnerability Finding(s) from Previous Cycles of &quot;{project.projectName}&quot;
+                      </strong>
+                    </div>
+                    <span style={{ fontSize: '0.78rem', background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', padding: '3px 8px', borderRadius: '4px', fontWeight: 600 }}>
+                      Same-Project Filter Active
+                    </span>
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">PREVIOUS VULNERABILITY NAME</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={previousName}
-                  onChange={(e) => setPreviousName(e.target.value)}
-                  placeholder="e.g. Broken Authentication"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">STATUS</label>
-                <select
-                  className="form-select"
-                  value={previousStatus}
-                  onChange={(e) => setPreviousStatus(e.target.value)}
-                >
-                  <option value="Open">Open</option>
-                  <option value="Resolved">Resolved</option>
-                  <option value="Retest Required">Retest Required</option>
-                  <option value="Not Provided">Not Provided</option>
-                </select>
-              </div>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                      <thead>
+                        <tr style={{ background: 'rgba(164, 194, 244, 0.15)', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <th style={{ padding: '8px 10px', textAlign: 'center', width: '50px' }}>No</th>
+                          <th style={{ padding: '8px 10px', textAlign: 'left' }}>Previous Vulnerability Name</th>
+                          <th style={{ padding: '8px 10px', textAlign: 'center', width: '110px' }}>Severity</th>
+                          <th style={{ padding: '8px 10px', textAlign: 'center', width: '140px' }}>Status</th>
+                          <th style={{ padding: '8px 10px', textAlign: 'left', width: '220px' }}>OWASP / CWE</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {previousProjectFindings.map((f, idx) => (
+                          <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                            <td style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 600 }}>{idx + 1}</td>
+                            <td style={{ padding: '8px 10px', fontWeight: 600, color: 'var(--text-primary)' }}>{f.vulnerability_name}</td>
+                            <td style={{ padding: '8px 10px', textAlign: 'center' }}>
+                              <span className={`badge-severity badge-${(f.severity || 'medium').toLowerCase()}`} style={{ fontSize: '0.75rem', padding: '2px 6px' }}>
+                                {f.severity}
+                              </span>
+                            </td>
+                            <td style={{ padding: '8px 10px', textAlign: 'center' }}>
+                              <span style={{
+                                padding: '3px 8px',
+                                borderRadius: '4px',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                background: (f.status || '').toLowerCase() === 'closed' || (f.status || '').toLowerCase() === 'resolved' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                                color: (f.status || '').toLowerCase() === 'closed' || (f.status || '').toLowerCase() === 'resolved' ? '#10b981' : '#ef4444'
+                              }}>
+                                {f.status || 'Open'}
+                              </span>
+                            </td>
+                            <td style={{ padding: '8px 10px', color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
+                              {f.owasp_category || f.cwe_number || 'OWASP Standard'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '8px', padding: '14px', color: '#fbbf24', fontSize: '0.86rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '1.2rem' }}>ℹ️</span>
+                  <span>
+                    No previous assessment cycles found in DB for <strong>&quot;{project.projectName || 'this project'}&quot;</strong>. When you create additional report cycles for this exact project name, all previous vulnerabilities and statuses will automatically link here without manual entry.
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>

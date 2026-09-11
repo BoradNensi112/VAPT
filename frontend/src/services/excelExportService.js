@@ -7,16 +7,24 @@ const BORDER_STYLE = {
   right: { style: 'thin', color: { argb: 'FF000000' } }
 };
 
+const HAIR_BORDER_STYLE = {
+  top: { style: 'hair', color: { argb: 'FF000000' } },
+  left: { style: 'hair', color: { argb: 'FF000000' } },
+  bottom: { style: 'hair', color: { argb: 'FF000000' } },
+  right: { style: 'hair', color: { argb: 'FF000000' } }
+};
+
+// Exact colors from E:/VAPT/Report Draft.xlsx
 const GREEN_BG = {
   type: 'pattern',
   pattern: 'solid',
-  fgColor: { argb: 'FFC8E6C9' } // Official BISAG-N VAPT Green
+  fgColor: { argb: 'FFB6D7A8' } // Exact draft green
 };
 
 const BLUE_HEADER_BG = {
   type: 'pattern',
   pattern: 'solid',
-  fgColor: { argb: 'FFD0E1FD' } // Official BISAG-N VAPT Header Blue
+  fgColor: { argb: 'FFA4C2F4' } // Exact draft header blue
 };
 
 const SEVERITY_ORDER = {
@@ -57,31 +65,31 @@ export async function generateVaptExcelReport({
     { width: 44 },  // E: Remediation
     { width: 14 },  // F: Severity
     { width: 30 },  // G: Reference
-    { width: 22 },  // H: OWASP Category – CWE number
+    { width: 26 },  // H: OWASP Category – CWE number
     { width: 36 }   // I: CWE Reference
   ];
 
-  // Row 5: Title
-  worksheet.mergeCells('B5:D5');
-  const titleCell = worksheet.getCell('B5');
+  // Rows 2-5: Merged A2:C5 Title block matching Report Draft.xlsx
+  worksheet.mergeCells('A2:C5');
+  const titleCell = worksheet.getCell('A2');
   titleCell.value = 'Manual Testing Report (VAPT)';
-  titleCell.font = { name: 'Times New Roman', size: 11, bold: true };
+  titleCell.font = { name: 'Arial', size: 14, bold: true, color: { argb: 'FF000000' } };
   titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
-  ['B5', 'C5', 'D5'].forEach((c) => (worksheet.getCell(c).border = BORDER_STYLE));
-  worksheet.getRow(5).height = 24;
+  
+  for (let r = 2; r <= 5; r++) {
+    worksheet.getRow(r).height = 18;
+    for (let c = 1; c <= 3; c++) {
+      worksheet.getRow(r).getCell(c).border = BORDER_STYLE;
+    }
+  }
 
   const dateStr = formatDate(assessmentDate || project.assessmentDate || project.created_at);
   const projectName = project.projectName || project.project_name || 'VAPT Assessment Target';
   const targetUrl = project.projectUrl || project.target_url || 'http://target.gov.in';
+  const department = project.department || 'Software';
   const analysts = Array.isArray(project.analysts)
     ? project.analysts.join(', ')
     : project.security_analysts || 'Ankit Nandaniya';
-
-  // Format Project Managers (Left: "Project Manager: ABCD, WXYZ")
-  let pmLeft = project.projectManager || project.project_managers || 'ABCD, WXYZ';
-  if (!pmLeft.startsWith('Project Manager:')) {
-    pmLeft = `Project Manager: ${pmLeft}`;
-  }
 
   // Format Concern Project Manager (Right: "Concern Project Manager: Shri ...")
   let concernPm = project.concernProjectManager || '';
@@ -103,47 +111,36 @@ export async function generateVaptExcelReport({
       : `Concern Additional Director: Shri ${concernDirector}`;
   }
 
-  // Format Additional Director cum CISO (Left: "Additional Director cum CISO: Shri ...")
-  let cisoName = project.cisoName || project.ciso_name || 'Shri ABCD';
-  if (!cisoName.startsWith('Additional Director cum CISO:')) {
-    cisoName = cisoName.startsWith('Shri ')
-      ? `Additional Director cum CISO: ${cisoName}`
-      : `Additional Director cum CISO: Shri ${cisoName}`;
-  }
-
-  // Helper function for applying green metadata rows with exact borders and alignment
+  // Helper function for applying green metadata rows with exact draft styling
   const applyGreenRow = (rowNumber, leftMerge, leftText, rightMerge = null, rightText = null) => {
     worksheet.mergeCells(leftMerge);
     const leftCell = worksheet.getCell(leftMerge.split(':')[0]);
     leftCell.value = leftText;
     leftCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-    leftCell.font = { name: 'Times New Roman', size: 10, bold: true };
+    leftCell.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FF000000' } };
 
     if (rightMerge && rightText !== null) {
       worksheet.mergeCells(rightMerge);
       const rightCell = worksheet.getCell(rightMerge.split(':')[0]);
       rightCell.value = rightText;
       rightCell.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 };
-      rightCell.font = { name: 'Times New Roman', size: 10, bold: true };
+      rightCell.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FF000000' } };
     }
 
     for (let col = 1; col <= 9; col++) {
       const cell = worksheet.getRow(rowNumber).getCell(col);
       cell.fill = GREEN_BG;
       cell.border = BORDER_STYLE;
-      if (!cell.font) {
-        cell.font = { name: 'Times New Roman', size: 10, bold: true };
-      }
     }
-    worksheet.getRow(rowNumber).height = 24;
+    worksheet.getRow(rowNumber).height = 22;
   };
 
-  // Row 8: Left: Project Name | Right: Date: 00/00/2026
+  // Row 8: Left: Project Name & Department | Right: Date: DD/MM/YYYY
   applyGreenRow(
     8,
-    'A8:C8',
-    `Project Name: ${projectName}`,
-    'D8:I8',
+    'A8:E8',
+    `Project Name: ${projectName}    Department: ${department}`,
+    'F8:I8',
     `Date: ${dateStr}`
   );
 
@@ -154,25 +151,20 @@ export async function generateVaptExcelReport({
   // Row 10: Left: Security Analyst: ... | Right: Concern Project Manager: Shri ...
   applyGreenRow(
     10,
-    'A10:C10',
+    'A10:E10',
     `Security Analyst: ${analysts}`,
-    'D10:I10',
+    'F10:I10',
     concernPm
   );
 
-  // Row 11: Left: Project Manager: ABCD, WXYZ | Right: Concern Additional Director: Shri ...
+  // Row 11: Concern Additional Director: Shri ... (Row 11 Left PM and Row 12 CISO removed per user request)
   applyGreenRow(
     11,
-    'A11:C11',
-    pmLeft,
-    'D11:I11',
+    'A11:I11',
     concernDirector
   );
 
-  // Row 12: Additional Director cum CISO: Shri ...
-  applyGreenRow(12, 'A12:I12', cisoName);
-
-  // Row 14: Findings Headers (Blue Header)
+  // Row 14: Findings Headers (Blue Header #A4C2F4)
   const headerRowIdx = 14;
   const headers = [
     'S.No',
@@ -191,7 +183,7 @@ export async function generateVaptExcelReport({
     const cell = headerRow.getCell(idx + 1);
     cell.value = h;
     cell.fill = BLUE_HEADER_BG;
-    cell.font = { name: 'Times New Roman', size: 10, bold: true };
+    cell.font = { name: 'Arial', size: 12, bold: true, color: { argb: 'FF000000' } };
     cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     cell.border = BORDER_STYLE;
   });

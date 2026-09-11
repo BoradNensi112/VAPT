@@ -32,11 +32,13 @@ import {
   FileText
 } from 'lucide-react';
 import { SEVERITY_OPTIONS, OWASP_OPTIONS } from '../data/vulnerabilityData';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import '../styles/knowledgeBase.css';
 
 export default function KnowledgeBase() {
   const navigate = useNavigate();
+  const { user, isAdmin } = useAuth();
 
   // KB State
   const [kbList, setKbList] = useState([]);
@@ -399,14 +401,16 @@ export default function KnowledgeBase() {
             <span>Export KB (JSON)</span>
           </button>
 
-          <button
-            onClick={handleOpenCreate}
-            className="cyber-btn cyber-btn-primary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
-          >
-            <Plus size={16} />
-            <span>Add Vulnerability</span>
-          </button>
+          {isAdmin && (
+            <button
+              onClick={handleOpenCreate}
+              className="cyber-btn cyber-btn-primary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+            >
+              <Plus size={16} />
+              <span>Add Vulnerability</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -687,24 +691,26 @@ export default function KnowledgeBase() {
                     </a>
                   ) : <span />}
 
-                  <div className="kb-footer-actions">
-                    <button
-                      className="kb-action-icon-btn"
-                      title="Edit Vulnerability in KB"
-                      onClick={() => handleOpenEdit(item)}
-                    >
-                      <Edit2 size={13} />
-                      <span>Edit</span>
-                    </button>
+                  {isAdmin && (
+                    <div className="kb-footer-actions">
+                      <button
+                        className="kb-action-icon-btn"
+                        title="Edit Vulnerability in KB"
+                        onClick={() => handleOpenEdit(item)}
+                      >
+                        <Edit2 size={13} />
+                        <span>Edit</span>
+                      </button>
 
-                    <button
-                      className="kb-action-icon-btn danger"
-                      title="Delete from KB"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
+                      <button
+                        className="kb-action-icon-btn danger"
+                        title="Delete from KB"
+                        onClick={() => handleDelete(item)}
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
