@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
+  UserPlus,
   GitBranch,
   FileSpreadsheet,
   CheckSquare,
@@ -59,7 +60,7 @@ export default function Sidebar({ isOpen, onClose }) {
             onClick={onClose}
           >
             <LayoutDashboard className="nav-link-icon" />
-            <span>SOC Dashboard</span>
+            <span>Dashboard</span>
           </NavLink>
 
           {isAdmin && (
@@ -68,8 +69,8 @@ export default function Sidebar({ isOpen, onClose }) {
               className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
               onClick={onClose}
             >
-              <Users className="nav-link-icon" />
-              <span>User & RBAC</span>
+              <UserPlus className="nav-link-icon" />
+              <span>Add User</span>
             </NavLink>
           )}
 
